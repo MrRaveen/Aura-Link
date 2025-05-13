@@ -1,0 +1,30 @@
+app.get('/getCount/:userID',(req,res)=>{
+    var postCount = "";
+    var following = "";
+    var followsers = "";
+    sequelize.sync().then(() => {
+        follower_info.count({
+            where: {
+                user_id : req.params.userID
+            }
+        }).then(dataGotFollowers => {
+            following = dataGotFollowers.toString();
+        }).catch((error)=>{
+            console.error('Failed to get data IN follwers part : ',error);
+        });
+        //post count
+        posts.count({
+            where: {
+                user_id : req.params.userID
+            }
+        }).then(dataGot => {
+            postCount = dataGot.toString();
+        }).catch((error)=>{
+            console.error('Failed to get data : ',error);
+        });
+        res.send("Post count :: " + postCount + "\nFollowings :: " + following);
+        //FIXME: fix the error
+    }).catch((error) => {
+        console.error('Unable to create table : ', error);
+    });
+});

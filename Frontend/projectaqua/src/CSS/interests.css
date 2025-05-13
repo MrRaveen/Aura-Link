@@ -1,0 +1,14 @@
+select{
+    height: 45px;
+    line-height: 30px;
+    padding: 10px;
+    /* padding-left: 3rem; */
+    width: 360px;
+    /* margin: 6px; */
+    border: 2px solid transparent;
+    border-radius: 10px;
+    outline: none;
+    background-color: #b9b9b9;
+    color: #0d0c22;
+    transition: .5s ease;
+}
