@@ -1,21 +1,17 @@
+/* eslint-disable no-empty */
+/* eslint-disable no-unused-vars */
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../CSS/index.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faComment, faUser, faImages, faUsers, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import StickyNavbar from '../Components/navBar.jsx';
-
+import React,{useState,useEffect} from 'react'
 import UserAccountPersonal from '../Controller/UserAccountPersonal.jsx';
-
-const photos = [
-    '/img1.jpg', '/img2.jpg', '/img3.jpg', 
-    '/img4.jpg', '/img5.jpg', '/img6.jpg', 
-    '/img7.jpg', '/img8.jpg', '/img9.jpg'
-];
-
-const AccountPage = () => {
-    const UserAccObj = new UserAccountPersonal();
+function AccountPage() {
+    const showDetails = () => console.log('Hovering!');
+                    const UserAccObj = new UserAccountPersonal();
     UserAccObj.getAccInfo().then(data => {
-    console.log("First Name:", data.fname); // Access fname from resolved data
     document.getElementById('mainName').innerText = data.fname + " " + data.lname;
     document.getElementById('email').innerText = data.email;
     document.getElementById('postCount').innerText = data.postCount;
@@ -32,15 +28,76 @@ document.getElementById('profile_pic_url').innerHTML = `
     />
 `;
     });
-//  console.log(UserAccObj.getAllPosts());
-//  const outPosts = UserAccObj.getAllPosts();
-//  const out3 = outPosts.out3;
-//  out3.forEach(element => {
-//     if(element!=null){
-
-//     }
-//  });
-    return (
+    //posts
+    var count = 0;
+ const outPosts = UserAccObj.getAllPosts();
+ console.log('Loading posts..');
+ console.log(outPosts);
+outPosts.then(result => {
+    const out3 = result.out3;//gets an array
+    const out1 = result.out1;//gets an array
+    const reaction = result.reaction;//gets an array
+    out1.forEach(postHolder => {
+        if(postHolder.content_type == "TEXT"){
+            //no contents
+            console.log('No contents');//FIXME: test
+        }else{
+            //append contents
+            var requiredData = out3[count];
+            var allReactions = reaction[count];
+            if(requiredData.length > 1){
+                console.log('Has higher contents');//FIXME: test
+                //take the image of arr[0]
+                  const contents = document.createElement("div");
+contents.className = "relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300";
+contents.innerHTML = `
+    <img
+        src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${requiredData[0].media_name}"
+        alt="test"
+        class="w-full h-64 object-cover transform transition duration-300 "
+    />
+    <div class="mt-2 items-center justify-center flex"><h3>${postHolder.title}</h3></div>
+    <div class="flex items-center justify-center">
+     <p class="text-center mb-1">${postHolder.description}</p>
+    </div>
+    <div class="flex items-center justify-center"><p class="text-center mb-1">${postHolder.date}</p></div>
+    <div class="flex items-center justify-center"><p class="text-center mb-1 mb-1">${postHolder.time}</p></div>  
+    <div class="bg-gray-200 flex space-x-4 items-center justify-center"><label>👍 ${allReactions.like}</label><label>😆 ${allReactions.laugh}</label><label>🥺 ${allReactions.sad}</label><label>❤️ ${allReactions.love}</label></div>
+     <div class="bg-gray-200 flex space-x-4 items-center justify-center"><button>View all images</button></div>
+    `;
+document.getElementById('contentGallery').appendChild(contents);
+            }else{
+                requiredData.forEach(contentJSONholder => {
+                         const contents = document.createElement("div");
+contents.className = "relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300";
+contents.innerHTML = `
+    <img
+        src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${contentJSONholder.media_name}"
+        alt="test"
+        class="w-full h-64 object-cover transform transition duration-300 "
+    />
+    <div class="mt-2 items-center justify-center flex"><h3>${postHolder.title}</h3></div>
+    <div class="flex items-center justify-center">
+     <p class="text-center mb-1">${postHolder.description}</p>
+    </div>
+    <div class="flex items-center justify-center"><p class="text-center mb-1">${postHolder.date}</p></div>
+    <div class="flex items-center justify-center"><p class="text-center mb-1 mb-1">${postHolder.time}</p></div>  
+    <div class="bg-gray-200 flex space-x-4 items-center justify-center">
+    <button>Test</button>
+    </div>
+    <div class="bg-gray-200 flex space-x-4 items-center justify-center"><label>👍 ${allReactions.like}</label><label>😆 ${allReactions.laugh}</label><label>🥺 ${allReactions.sad}</label><label>❤️ ${allReactions.love}</label></div>
+    <div class="bg-indigo-800">
+    <button class="text-center">View all images</button>
+    </div>
+    `;
+document.getElementById('contentGallery').appendChild(contents);
+                });
+            }
+        }
+        count++;
+    });
+});
+     return (
         <div>
             <StickyNavbar></StickyNavbar>
             <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
@@ -97,31 +154,13 @@ document.getElementById('profile_pic_url').innerHTML = `
 
             {/* Gallery Section */}
             <div className="w-full lg:w-3/4 p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {photos.map((photo, index) => (
-                        <div key={index} className="relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300">
-                            <img
-                                src={photo}
-                                alt={`Gallery ${index + 1}`}
-                                className="w-full h-64 object-cover transform transition duration-300 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition duration-300 flex items-center justify-center space-x-4">
-                                <button className="opacity-0 group-hover:opacity-100 transform -translate-y-2 group-hover:translate-y-0 transition duration-300">
-                                    <FontAwesomeIcon icon={faHeart} className="text-white text-2xl hover:text-red-500" />
-                                    <span className="text-white ml-2">1.2k</span>
-                                </button>
-                                <button className="opacity-0 group-hover:opacity-100 transform -translate-y-2 group-hover:translate-y-0 transition duration-300">
-                                    <FontAwesomeIcon icon={faComment} className="text-white text-2xl hover:text-blue-400" />
-                                    <span className="text-white ml-2">356</span>
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id='contentGallery'>
+                     
                 </div>
             </div>
         </div>
         </div>
     );
-};
+}
 
 export default AccountPage;

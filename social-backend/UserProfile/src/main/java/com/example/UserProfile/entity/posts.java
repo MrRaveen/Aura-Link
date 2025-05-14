@@ -1,6 +1,7 @@
 package com.example.UserProfile.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ public class posts implements Serializable {
         VIDEO_IMAGES
     }
     private int postid;
+    @JsonProperty("content_type")
     private content_type contentType;
     private Date date;
     private String description;
