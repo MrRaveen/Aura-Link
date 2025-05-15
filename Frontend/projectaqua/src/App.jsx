@@ -9,6 +9,7 @@ import NormalCreateAccount2 from './Components/normalCreateAccount2.jsx';
 import VerificationCodePageView from './Components/varificationCodePage.jsx';
 import InterestsColPage from './Components/interestsColPage.jsx';
 import AccountPage from './Components/accountPage.jsx';
+import ViewAllImages from './Components/viewAllImages.jsx';
 import { CookiesProvider, useCookies } from 'react-cookie'
 import {
   BrowserRouter as Router,
@@ -30,6 +31,7 @@ function App(){
         <Route path='/verificationView' element={<VerificationCodePageView/>}/>
         <Route path='/inteColPage' element={<InterestsColPage/>}/>
         <Route path='/accountPath' element={<AccountPage/>}/>
+        <Route path = '/ViewAllImages' element={<ViewAllImages/>}/>
       </Routes>
     </Router>
     </>

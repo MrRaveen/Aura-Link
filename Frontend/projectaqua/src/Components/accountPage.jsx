@@ -1,16 +1,21 @@
-/* eslint-disable no-empty */
+    /* eslint-disable no-empty */
 /* eslint-disable no-unused-vars */
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../CSS/index.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faComment, faUser, faImages, faUsers, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import StickyNavbar from '../Components/navBar.jsx';
 import React,{useState,useEffect} from 'react'
+import { useNavigate } from 'react-router-dom';
 import UserAccountPersonal from '../Controller/UserAccountPersonal.jsx';
+
+//TODO: use mappings - later
 function AccountPage() {
-    const showDetails = () => console.log('Hovering!');
-                    const UserAccObj = new UserAccountPersonal();
+    const UserAccObj = new UserAccountPersonal();
+    const navigate = useNavigate();
+     const navigateToImagePage = (dataObject) => {
+        navigate('/ViewAllImages',{state : dataObject});
+    }
     UserAccObj.getAccInfo().then(data => {
     document.getElementById('mainName').innerText = data.fname + " " + data.lname;
     document.getElementById('email').innerText = data.email;
@@ -30,12 +35,12 @@ document.getElementById('profile_pic_url').innerHTML = `
     });
     //posts
     var count = 0;
- const outPosts = UserAccObj.getAllPosts();
- console.log('Loading posts..');
- console.log(outPosts);
-outPosts.then(result => {
-    const out3 = result.out3;//gets an array
-    const out1 = result.out1;//gets an array
+    const outPosts = UserAccObj.getAllPosts();
+    console.log('Loading posts..');
+    console.log(outPosts);
+    outPosts.then(result => {
+    const out3 = result.out3;//gets an array (post content table)
+    const out1 = result.out1;//gets an array (main post table)
     const reaction = result.reaction;//gets an array
     out1.forEach(postHolder => {
         if(postHolder.content_type == "TEXT"){
@@ -43,55 +48,73 @@ outPosts.then(result => {
             console.log('No contents');//FIXME: test
         }else{
             //append contents
-            var requiredData = out3[count];
+            var requiredData = out3[count];//post contents array set
             var allReactions = reaction[count];
             if(requiredData.length > 1){
                 console.log('Has higher contents');//FIXME: test
                 //take the image of arr[0]
-                  const contents = document.createElement("div");
-contents.className = "relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300";
-contents.innerHTML = `
-    <img
-        src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${requiredData[0].media_name}"
-        alt="test"
-        class="w-full h-64 object-cover transform transition duration-300 "
-    />
-    <div class="mt-2 items-center justify-center flex"><h3>${postHolder.title}</h3></div>
-    <div class="flex items-center justify-center">
-     <p class="text-center mb-1">${postHolder.description}</p>
-    </div>
-    <div class="flex items-center justify-center"><p class="text-center mb-1">${postHolder.date}</p></div>
-    <div class="flex items-center justify-center"><p class="text-center mb-1 mb-1">${postHolder.time}</p></div>  
-    <div class="bg-gray-200 flex space-x-4 items-center justify-center"><label>👍 ${allReactions.like}</label><label>😆 ${allReactions.laugh}</label><label>🥺 ${allReactions.sad}</label><label>❤️ ${allReactions.love}</label></div>
-     <div class="bg-gray-200 flex space-x-4 items-center justify-center"><button>View all images</button></div>
-    `;
-document.getElementById('contentGallery').appendChild(contents);
+//                   const contents = document.createElement("div");
+// contents.className = "relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300";
+// contents.innerHTML = `
+//   <div class="relative w-full h-64">
+//   <img
+//     src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${requiredData[0].media_name}"
+//     alt="test"
+//     class="w-full h-full object-cover"
+//   />
+//   <button value = ${JSON.stringify(requiredData[count])} id="viewAllImages" class="absolute left-2 bottom-2 z-10 bg-white bg-opacity-80 text-black p-2 rounded shadow">
+//     View all images (${requiredData.length})
+//   </button>
+//     </div>
+//     <div class="mt-2 items-center justify-center flex"><h3>${postHolder.title}</h3></div>
+//     <div class="flex items-center justify-center">
+//      <p class="text-center mb-1">${postHolder.description}</p>
+//     </div>
+//     <div class="flex items-center justify-center"><p class="text-center mb-1">${postHolder.date}</p></div>
+//     <div class="flex items-center justify-center"><p class="text-center mb-1 mb-1">${postHolder.time}</p></div>  
+//     <div class="bg-gray-200 flex space-x-4 items-center justify-center"><label>👍 ${allReactions.like}</label><label>😆 ${allReactions.laugh}</label><label>🥺 ${allReactions.sad}</label><label>❤️ ${allReactions.love}</label></div>
+//      <div class="bg-gray-200 flex space-x-4 items-center justify-center"><button>Comments 🗨️</button></div>
+//     `;
+// document.getElementById('contentGallery').appendChild(contents);
             }else{
-                requiredData.forEach(contentJSONholder => {
-                         const contents = document.createElement("div");
-contents.className = "relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300";
-contents.innerHTML = `
-    <img
-        src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${contentJSONholder.media_name}"
-        alt="test"
-        class="w-full h-64 object-cover transform transition duration-300 "
-    />
+          requiredData.forEach(contentJSONholder => {
+    const contents = document.createElement("div");
+    contents.className = "relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300";
+    
+    // Use random ID or data attributes instead
+    const uniqueId = `viewBtn_${Math.random().toString(36).substr(2, 9)}`;
+    
+    contents.innerHTML = `
+        <div class="relative w-full h-64">
+            <img src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${contentJSONholder.media_name}" 
+                 alt="test" 
+                 class="w-full h-full object-cover">
+            <button data-view-button 
+                    value="${encodeURIComponent(JSON.stringify(requiredData))}" 
+                    class="absolute left-2 bottom-2 z-10 bg-white bg-opacity-80 text-black p-2 rounded shadow">
+                View all images (${requiredData.length})
+            </button>
+        </div>
+         </div>
     <div class="mt-2 items-center justify-center flex"><h3>${postHolder.title}</h3></div>
     <div class="flex items-center justify-center">
      <p class="text-center mb-1">${postHolder.description}</p>
     </div>
     <div class="flex items-center justify-center"><p class="text-center mb-1">${postHolder.date}</p></div>
     <div class="flex items-center justify-center"><p class="text-center mb-1 mb-1">${postHolder.time}</p></div>  
-    <div class="bg-gray-200 flex space-x-4 items-center justify-center">
-    <button>Test</button>
-    </div>
     <div class="bg-gray-200 flex space-x-4 items-center justify-center"><label>👍 ${allReactions.like}</label><label>😆 ${allReactions.laugh}</label><label>🥺 ${allReactions.sad}</label><label>❤️ ${allReactions.love}</label></div>
     <div class="bg-indigo-800">
-    <button class="text-center">View all images</button>
-    </div>
-    `;
-document.getElementById('contentGallery').appendChild(contents);
-                });
+    <button class="text-center">Comments 🗨️</button></div>`;
+    
+    // Get the SPECIFIC button from THIS card
+    const btn = contents.querySelector('[data-view-button]');
+    btn.addEventListener('click', () => {
+        const data = JSON.parse(decodeURIComponent(btn.value));
+        navigateToImagePage(data);
+    });
+    
+    document.getElementById('contentGallery').appendChild(contents);
+});
             }
         }
         count++;
@@ -154,8 +177,8 @@ document.getElementById('contentGallery').appendChild(contents);
 
             {/* Gallery Section */}
             <div className="w-full lg:w-3/4 p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id='contentGallery'>
-                     
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 relative" id='contentGallery'>
+                     {/*items are appended*/}
                 </div>
             </div>
         </div>
