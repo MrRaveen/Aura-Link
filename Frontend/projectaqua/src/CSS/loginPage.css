@@ -39,7 +39,6 @@ button{
     border: none;
     font-family: Arial;
     font-weight: bolder;
-    /* background-color: #3D365C; */
 }
 button:hover{
     background-color: #2b2158;
