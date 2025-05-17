@@ -109,6 +109,8 @@ document.getElementById('profile_pic_url').innerHTML = `
     // Get the SPECIFIC button from THIS card
     const btn = contents.querySelector('[data-view-button]');
     btn.addEventListener('click', () => {
+        const postID = postHolder.postid;
+        console.log("POST ID : " + postID);//FIXME: test
         const data = JSON.parse(decodeURIComponent(btn.value));
         navigateToImagePage(data);
     });

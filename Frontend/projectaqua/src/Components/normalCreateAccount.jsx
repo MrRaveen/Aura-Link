@@ -55,42 +55,42 @@ const NormalCreateAccount = () => {
               
               <label>First Name</label>
               <br />
-              <input ref={fname} type="text" name="userName" id="userName" required />
+              <input className='input' ref={fname} type="text" name="userName" id="userName" required />
               <br />
 
               <label>Last Name</label>
               <br />
-              <input ref={lname} type="text" name="userName" id="userName" required />
+              <input className='input' ref={lname} type="text" name="userName" id="userName" required />
               <br />
 
               <label>Bio</label>
               <br />
-              <input ref={bioText} type="text" name="userName" id="userName" required />
+              <input className='input' ref={bioText} type="text" name="userName" id="userName" required />
               <br />
 
               <label>Date of birth</label>
               <br />
-              <input ref={DOB} type="date" name="userName" id="userName" required />
+              <input className='input' ref={DOB} type="date" name="userName" id="userName" required />
               <br />
 
               <label>Age</label>
               <br />
-              <input ref={ageIn} type="number" name="userName" id="userName" required />
+              <input className='input' ref={ageIn} type="number" name="userName" id="userName" required />
               <br />
 
               <label>Mobile</label>
               <br />
-              <input ref={mobile} type="number" name="userName" id="userName" required />
+              <input className='input' ref={mobile} type="number" name="userName" id="userName" required />
               <br />
 
               <label>Address</label>
               <br />
-              <input ref={address} type="text" name="userName" id="userName" required />
+              <input className='input' ref={address} type="text" name="userName" id="userName" required />
               <br />
 
               <label>Job</label>
               <br />
-              <input ref={job} type="text" name="userName" id="userName" required />
+              <input className='input' ref={job} type="text" name="userName" id="userName" required />
               <br /><br />
 
               <div className="centerDiv2">

@@ -4,12 +4,20 @@ import '../CSS/index.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faTimes, faArrowLeft, faRemove } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import StickyNavbar from '../Components/navBar.jsx';
 import { faAdd } from '@fortawesome/free-solid-svg-icons/faAdd';
+import imageAdd from '../Controller/imageAdd.jsx';
 
 var jsonData;
 function ViewAllImages() {
+    //pic ref
+    const picRef = useRef();
+    //image add obj
+    const handlePicSend = () => {
+        const imgAddObj = new imageAdd(picRef);
+        imgAddObj.handleImgInsert();
+    }
     const location = useLocation();
     const navigate = useNavigate();
     const receivedData = location.state;
@@ -58,10 +66,10 @@ function ViewAllImages() {
                     <FontAwesomeIcon icon={faArrowLeft} />
                     <span className='pl-2'>Back to Gallery</span>
                 </button>
-                <input type="file" className='m-10 gap-20'/>
+                <input ref={picRef} type="file" className='bg-slate-500 text-white p-3 rounded'/>
                 <button 
-                    className="m-0 p-3 rounded flex items-center gap-0 text-white-500 bg-blue-400"
-                >
+                    onClick={() => handlePicSend()}
+                    className="m-0 p-3 rounded flex items-center gap-0 text-white-500 bg-blue-400">
                     <FontAwesomeIcon icon={faAdd} />
                     <span className='pl-2'>Add images</span>
                 </button>

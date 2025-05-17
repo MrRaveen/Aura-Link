@@ -78,7 +78,7 @@ const VerificationCodePageView = () => {
                 <div className='centerDiv2'>
                 <div>
                 <label className='submitButton'>Verification code</label>
-                <input ref={verificationCode} type="text" name="userName" id="userName" />
+                <input className='input' ref={verificationCode} type="text" name="userName" id="userName" />
                 <br /><br />
                 <div className='submitButton'>
                 <button className="m-1 rounded bg-indigo-900 border-2 flex items-center gap-2" onClick={()=>hadleVerificationForm()}>

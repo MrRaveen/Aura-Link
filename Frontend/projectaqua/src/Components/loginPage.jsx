@@ -62,9 +62,9 @@ const LogInPage = () => {
         <div className="centerDiv">
         <div className='formBoarder'>
             <label>User Name</label><br></br>
-            <input ref={userNameRef} type="text" name="userName" id="userName"></input><br></br>
+            <input ref={userNameRef} type="text" name="userName" id="userName" className='input'></input><br></br>
             <label>Password</label><br></br>
-            <input ref={passRef} type="password" name="userName" id="userName"></input><br></br>
+            <input ref={passRef} type="password" name="userName" id="userName" className='input'></input><br></br>
             <div className='submitButton'><button className="m-4 rounded bg-indigo-900" onClick={()=>HandleLogIn(userNameRef.current.value,passRef.current.value)}>Log In</button></div>
             <button className="m-0 rounded bg-blue-500 border-2 flex items-center gap-2" onClick={() => HandleSocialLogIn()}>
             <img src="https://www.vectorlogo.zone/logos/google/google-tile.svg" alt="Google Logo" className="w-6 h-6" />Log In with Google</button>

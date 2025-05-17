@@ -69,25 +69,25 @@ const NormalCreateAccount2 = () => {
                 <div>
                 <label>User Name</label>
                 <br />
-                <input ref={userNameRef} type="text" name="userName" id="userName" />
+                <input className='input' ref={userNameRef} type="text" name="userName" id="userName" />
                 <br />
                 <label>Email</label>
                 <br />
-                <input ref={emailRef} type="email" name="userName" id="userName" />
+                <input className='input' ref={emailRef} type="email" name="userName" id="userName" />
                 <br />
 
                 <label>Password</label>
                 <br />
-                <input ref={passRef} type="password" name="userName" id="userName" />
+                <input className='input' ref={passRef} type="password" name="userName" id="userName" />
                 <br />
 
                 <label>Confirm Password</label>
                 <br />
-                <input ref={consfPassRef} type="password" name="userName" id="userName" />
+                <input className='input' ref={consfPassRef} type="password" name="userName" id="userName" />
                 <br />
                 <label>Profile Picture</label>
                 <br />
-                <input ref={picRef} type="file" name="userName" id="userName" />
+                <input className='input' ref={picRef} type="file" name="userName" id="userName" />
                 <br /><br />
                 <button className="m-1 rounded bg-indigo-900 border-2 flex items-center gap-2" onClick={()=> handleVerification()}>
                          Next
