@@ -4,14 +4,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../CSS/index.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload, faTimes, faArrowLeft, faRemove } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faTimes, faArrowLeft, faRemove, faPenAlt } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState, useRef } from 'react';
 import StickyNavbar from '../Components/navBar.jsx';
 import { faAdd } from '@fortawesome/free-solid-svg-icons/faAdd';
 import imageAdd from '../Controller/imageAdd.jsx';
-
 import getIDprocess from '../Controller/getTheuserID';
 import removeCache from '../Controller/removeCache';
+import removeImage from '../Controller/removeImage.jsx';
+
+import removePost from '../Controller/removePost.jsx';
 
 var jsonData;
 function ViewAllImages() {
@@ -42,13 +44,32 @@ function ViewAllImages() {
     const navigate = useNavigate();
         //get the passing data
     const {data,postid} = location.state;
+    //remove post obj
+    const removePostObj = new removePost(postid);
     console.log(data);//FIXME: TEST
     const [currentImage, setCurrentImage] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const removeContent = (contentID) => {
-        console.log('remove process : ' + contentID);
+
+    //remove button handler (image)
+    const removeContent = async (contentID) => {
+        if (confirm("Are you sure you want to remove this image?")) {
+        const removeImgObj = new removeImage(contentID);
+        const removedResult = await removeImgObj.removeImgProcess();
+        if(removedResult == 'Removed content' || removedResult == 'Blob did not removed' || removedResult == 'No such post content'){
+            const removeCacheObj = new removeCache(userID);
+            const removedResult2 = await removeCacheObj.removeRequest();
+            if(removedResult2 == 'removed'){
+                alert(removedResult);
+            }else{
+                alert('Error occured when removing cache : '+removedResult);
+            }
+        }else{
+            alert('Error occured when removing content (viewAllImages) : ' + removedResult)
+        }
+        navigate('/accountPath');
+        }
     }
-    // Handle image download
+    //FIXME: FIX THE ERROR
     const handleDownload = async (mediaName) => {
         try {
             const response = await fetch(`http://127.0.0.1:10000/devstoreaccount1/postcontents/${mediaName}`);
@@ -64,6 +85,13 @@ function ViewAllImages() {
             console.error('Download failed:', error);
         }
     };
+
+    const updateHandle = () => {
+
+    }
+    const removeHandle = () => {
+        
+    }
 
     // Navigation controls
     const handleNext = () => {
@@ -87,6 +115,7 @@ function ViewAllImages() {
                     <FontAwesomeIcon icon={faArrowLeft} />
                     <span className='pl-2'>Back to Gallery</span>
                 </button>
+                {/* //TODO: VALIDATE THE INPUT */}
                 <input ref={picRef} type="file" className='bg-slate-500 text-white p-3 rounded'/>
                 <button 
                     onClick={() => handlePicSend()}
@@ -99,6 +128,24 @@ function ViewAllImages() {
                 </div>
             </div>
             </div>
+<div className='flex justify-center items-center'>
+  <div className="mb-6 p-4 bg-white rounded-lg shadow-md sticky top-0 z-10 w-full flex flex-row justify-center gap-4">
+    <button 
+      onClick={() => removeHandle()}
+      className="p-3 rounded flex items-center gap-0 text-white-500 bg-blue-400"
+    >
+      <FontAwesomeIcon icon={faRemove} />
+      <span className='pl-2'>Remove post</span>
+    </button>
+    <button 
+      onClick={() => updateHandle()}
+      className="p-3 rounded flex items-center gap-0 text-white-500 bg-blue-400"
+    >
+      <FontAwesomeIcon icon={faPenAlt} />
+      <span className='pl-2'>Update</span>
+    </button>
+  </div>
+</div>
 
             {/* Main Image Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -137,7 +184,7 @@ function ViewAllImages() {
                         {/* Image Metadata */}
                         <div className="p-3 pt-0">
                             <div className="flex justify-between items-center text-sm text-gray-600">
-                                <span>Size: {JSON.parse(item.meta_data).size}</span>
+                                <span>Size: {JSON.parse(item.meta_data).size}KB</span>
                                 <span>{item.type}</span>
                             </div>
                         </div>

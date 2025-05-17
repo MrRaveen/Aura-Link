@@ -61,6 +61,9 @@ public class PostContentEntity {
         return postid;
     }
 
+    public PostContentEntity() {
+    }
+
     public PostContentEntity(String media_name, String meta_data, String type, postEntity postid) {
         this.media_name = media_name;
         this.meta_data = meta_data;

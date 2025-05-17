@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 //querry types
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, where } = require('sequelize');
 //DB Connection
 const sequelize = require('./dbConn');
 //model imports
@@ -264,5 +264,70 @@ app.get('/getFollowsers/:userID',async (req,res)=>{
         type: QueryTypes.SELECT,
     });
     res.send(result);
+});
+//post remove process
+//remove comments
+app.delete('/removeComments/:postID',(req,res)=>{
+    sequelize.sync().then(()=>{
+        post_comments.destroy({
+            where: {
+                postid : req.params.postID
+            }
+        }).then(response => {
+            res.send(response.toString());
+        }).catch((error)=>{
+            res.send('Error occured when removing data : ' + error);
+        });
+    }).catch((error)=>{
+         res.send('Error occured when removing data : ' + error);
+    });
+});
+//remove the post reactions
+app.delete('/removeReactions/:postID',(req,res)=>{
+    sequelize.sync().then(()=>{
+        post_reaction.destroy({
+            where: {
+                postid : req.params.postID
+            }
+        }).then(response => {
+            res.send(response.toString());
+        }).catch((error)=>{
+            res.send('Error occured when removing data : ' + error);
+        });
+    }).catch((error)=>{
+         res.send('Error occured when removing data : ' + error);
+    });
+});
+//get the post content names
+app.get('/getPostContentName/:postID',(req,res)=>{
+    sequelize.sync().then(()=>{
+        post_content.findAll({
+            where: {
+                postid : req.params.postID
+            }
+        }).then(response => {
+            res.send(response);
+        }).catch((error)=>{
+            res.send('Error occured when removing data : ' + error);
+        });
+    }).catch((error)=>{
+         res.send('Error occured when removing data : ' + error);
+    });
+});
+//remove from content table
+app.delete('/removePostDetailsAll/:postID',(req,res)=>{
+    sequelize.sync().then(()=>{
+        post_content.destroy({
+            where: {
+                postid : req.params.postID
+            }
+        }).then(response => {
+            res.send('Data removed');
+        }).catch((error)=>{
+            res.send('Error occured when removing data : ' + error);
+        });
+    }).catch((error)=>{
+         res.send('Error occured when removing data : ' + error);
+    });
 });
 app.listen(3000);
