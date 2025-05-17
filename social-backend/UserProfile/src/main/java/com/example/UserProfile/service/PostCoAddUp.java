@@ -9,6 +9,7 @@ import com.example.UserProfile.entity.postEntity;
 import com.example.UserProfile.repository.PostContentRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -29,15 +30,20 @@ public class PostCoAddUp {
     @Autowired
     private BlobServiceClient blobServiceClient;
 
+    @CacheEvict(value = "posts", key = "#userId")
+    public void evictUserPostsCache(int userId){
+        System.out.println("userID : " + userId);
+    }
     @Transactional
-    public String addingProcess(MultipartFile file, int postID) {
+    public String addingProcess(MultipartFile file, int postID, int userID) {
         try{
             //add the details to the table
             String fileName = file.getOriginalFilename();//get the name
             String type = file.getContentType(); //get the file type
             //meta data
             long sizeMeta = file.getSize();
-            String metaData = "{size:" + sizeMeta + ",fileName: " + fileName + "}";
+            sizeMeta = sizeMeta / 1000;
+            String metaData = "{\"size\":" +"\""+ String.valueOf(sizeMeta) +"\""+ ",\"fileName\":" +"\""+ fileName +"\""+ "}";
             //post ID
             postEntity postIDinput = new postEntity();
             postIDinput.setPostid(postID);
@@ -62,7 +68,9 @@ public class PostCoAddUp {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); //rollback
                 return "Blob did not upload";
             }else{
-                return "Blob uploaded : " + blobClient.getBlobUrl();
+                //invalidate cache
+                evictUserPostsCache(userID);
+                return "Blob uploaded";
             }
         }catch(Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); //rollback

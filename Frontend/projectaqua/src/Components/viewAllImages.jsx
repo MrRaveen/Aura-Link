@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable no-unused-vars */
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../CSS/index.css';
@@ -9,21 +10,41 @@ import StickyNavbar from '../Components/navBar.jsx';
 import { faAdd } from '@fortawesome/free-solid-svg-icons/faAdd';
 import imageAdd from '../Controller/imageAdd.jsx';
 
+import getIDprocess from '../Controller/getTheuserID';
+import removeCache from '../Controller/removeCache';
+
 var jsonData;
 function ViewAllImages() {
     //pic ref
     const picRef = useRef();
-    //image add obj
-    const handlePicSend = () => {
-        const imgAddObj = new imageAdd(picRef);
-        imgAddObj.handleImgInsert();
+    const userID = getIDprocess();
+    //image add click handler
+    const handlePicSend = async () => {
+        const imgAddObj = new imageAdd(picRef,postid,userID);
+        var result = await imgAddObj.handleImgInsert();
+        if(result == 'Blob uploaded' || result == 'Maximum content amount exceeded' || result == 'Blob did not upload'){
+            if(result == 'Blob uploaded'){
+                const removeCacheObj = new removeCache(userID);
+                const removedResult = await removeCacheObj.removeRequest();
+                if(removedResult == 'removed'){
+                    alert(result);
+                    navigate('/accountPath');
+                }else{
+                    alert('Error occured when removing cache : '+removedResult);
+                    navigate('/accountPath');
+                }
+            }
+        }else{
+            alert('Error occured when inserting data (viewAllImages.jsx) : ' + result);
+        }
     }
     const location = useLocation();
     const navigate = useNavigate();
-    const receivedData = location.state;
+        //get the passing data
+    const {data,postid} = location.state;
+    console.log(data);//FIXME: TEST
     const [currentImage, setCurrentImage] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    console.log(receivedData);
     const removeContent = (contentID) => {
         console.log('remove process : ' + contentID);
     }
@@ -46,11 +67,11 @@ function ViewAllImages() {
 
     // Navigation controls
     const handleNext = () => {
-        setCurrentImage(prev => (prev + 1) % receivedData.length);
+        setCurrentImage(prev => (prev + 1) % data.length);
     };
 
     const handlePrev = () => {
-        setCurrentImage(prev => (prev - 1 + receivedData.length) % receivedData.length);
+        setCurrentImage(prev => (prev - 1 + data.length) % data.length);
     };
     return (
         <div>
@@ -74,14 +95,14 @@ function ViewAllImages() {
                     <span className='pl-2'>Add images</span>
                 </button>
                 <div className="text-gray-600">
-                    Showing {receivedData.length} images
+                    Showing {data.length} images
                 </div>
             </div>
             </div>
 
             {/* Main Image Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {receivedData.map((item, index) => (
+                {data.map((item, index) => (
                     <div 
                         key={item.contentid}
                         className="relative group bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
@@ -130,7 +151,7 @@ function ViewAllImages() {
                     <div className="relative max-w-4xl w-full">
                         <div className='relative'>
                                                     <img
-                            src={`http://127.0.0.1:10000/devstoreaccount1/postcontents/${receivedData[currentImage].media_name}`}
+                            src={`http://127.0.0.1:10000/devstoreaccount1/postcontents/${data[currentImage].media_name}`}
                             alt="Fullscreen view"
                             className="max-h-[90vh] w-full object-contain"
                         />
@@ -153,7 +174,7 @@ function ViewAllImages() {
                         <div className='relative grid grid-cols-4 gap-4'>
                             <button className='absolute left-30 bottom-2 z-10 bg-white bg-opacity-80 text-black p-2 rounded shadow' onClick={() => setIsFullscreen(false)}>❌</button>
                             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black bg-opacity-50 text-white px-4 py-2 rounded-full">
-                            {currentImage + 1} / {receivedData.length}
+                            {currentImage + 1} / {data.length}
                             </div>
                         </div>
                     </div>

@@ -13,8 +13,8 @@ import UserAccountPersonal from '../Controller/UserAccountPersonal.jsx';
 function AccountPage() {
     const UserAccObj = new UserAccountPersonal();
     const navigate = useNavigate();
-     const navigateToImagePage = (dataObject) => {
-        navigate('/ViewAllImages',{state : dataObject});
+     const navigateToImagePage = (dataObject,postID) => {
+        navigate('/ViewAllImages',{state : {data : dataObject,postid : postID}});
     }
     UserAccObj.getAccInfo().then(data => {
     document.getElementById('mainName').innerText = data.fname + " " + data.lname;
@@ -50,35 +50,8 @@ document.getElementById('profile_pic_url').innerHTML = `
             //append contents
             var requiredData = out3[count];//post contents array set
             var allReactions = reaction[count];
-            if(requiredData.length > 1){
-                console.log('Has higher contents');//FIXME: test
-                //take the image of arr[0]
-//                   const contents = document.createElement("div");
-// contents.className = "relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300";
-// contents.innerHTML = `
-//   <div class="relative w-full h-64">
-//   <img
-//     src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${requiredData[0].media_name}"
-//     alt="test"
-//     class="w-full h-full object-cover"
-//   />
-//   <button value = ${JSON.stringify(requiredData[count])} id="viewAllImages" class="absolute left-2 bottom-2 z-10 bg-white bg-opacity-80 text-black p-2 rounded shadow">
-//     View all images (${requiredData.length})
-//   </button>
-//     </div>
-//     <div class="mt-2 items-center justify-center flex"><h3>${postHolder.title}</h3></div>
-//     <div class="flex items-center justify-center">
-//      <p class="text-center mb-1">${postHolder.description}</p>
-//     </div>
-//     <div class="flex items-center justify-center"><p class="text-center mb-1">${postHolder.date}</p></div>
-//     <div class="flex items-center justify-center"><p class="text-center mb-1 mb-1">${postHolder.time}</p></div>  
-//     <div class="bg-gray-200 flex space-x-4 items-center justify-center"><label>👍 ${allReactions.like}</label><label>😆 ${allReactions.laugh}</label><label>🥺 ${allReactions.sad}</label><label>❤️ ${allReactions.love}</label></div>
-//      <div class="bg-gray-200 flex space-x-4 items-center justify-center"><button>Comments 🗨️</button></div>
-//     `;
-// document.getElementById('contentGallery').appendChild(contents);
-            }else{
-          requiredData.forEach(contentJSONholder => {
-    const contents = document.createElement("div");
+            //requiredData.forEach(contentJSONholder => {});
+             const contents = document.createElement("div");
     contents.className = "relative group overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300";
     
     // Use random ID or data attributes instead
@@ -86,7 +59,7 @@ document.getElementById('profile_pic_url').innerHTML = `
     
     contents.innerHTML = `
         <div class="relative w-full h-64">
-            <img src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${contentJSONholder.media_name}" 
+            <img src="http://127.0.0.1:10000/devstoreaccount1/postcontents/${requiredData[0].media_name}" 
                  alt="test" 
                  class="w-full h-full object-cover">
             <button data-view-button 
@@ -110,14 +83,11 @@ document.getElementById('profile_pic_url').innerHTML = `
     const btn = contents.querySelector('[data-view-button]');
     btn.addEventListener('click', () => {
         const postID = postHolder.postid;
-        console.log("POST ID : " + postID);//FIXME: test
         const data = JSON.parse(decodeURIComponent(btn.value));
-        navigateToImagePage(data);
+        navigateToImagePage(data,postID);
     });
     
     document.getElementById('contentGallery').appendChild(contents);
-});
-            }
         }
         count++;
     });

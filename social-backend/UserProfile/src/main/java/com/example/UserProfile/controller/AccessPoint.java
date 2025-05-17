@@ -86,10 +86,10 @@ public class AccessPoint {
     }
     //add a new image (limitations for 10 contents)
     @PostMapping("/addImage")
-    public String addImage(@RequestParam int postID, @RequestParam("file") MultipartFile file) {
+    public String addImage(@RequestParam("file") MultipartFile file,@RequestParam int postID, @RequestParam int userID) {
         boolean result2 = postCoAddUp.checkEligibility(postID);
         if (result2) {
-            String result = postCoAddUp.addingProcess(file, postID);
+            String result = postCoAddUp.addingProcess(file, postID, userID);
             return result;
         }else{
             return "Maximum content amount exceeded";
@@ -138,5 +138,11 @@ public class AccessPoint {
             result = savePostProcess.savePostProcess(innerObj,special);
         }
         return result;
+    }
+    //TODO: REMOVE LATER
+    @DeleteMapping("/removeCache")
+    public String removeCache(@RequestParam int userID) {
+        postCoAddUp.evictUserPostsCache(userID);
+        return "removed";
     }
 }
