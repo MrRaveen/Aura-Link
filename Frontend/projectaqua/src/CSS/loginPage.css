@@ -1,0 +1,61 @@
+@import "tailwindcss";
+.centerDiv{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 65vh;
+}
+.centerDiv2{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.input{
+  height: 45px;
+  line-height: 30px;
+  padding: 10px;
+  /* padding-left: 3rem; */
+  width: 360px;
+  /* margin: 6px; */
+  border: 2px solid transparent;
+  border-radius: 10px;
+  outline: none;
+  background-color: #b9b9b9;
+  color: #0d0c22;
+  transition: .5s ease;
+}
+label{
+    margin: 6px;
+    font-family: Arial;
+    font-weight: bold;
+}
+button{
+    margin: 6px;
+    padding: 12px;
+    padding-left: 91px;
+    padding-right: 91px;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    font-family: Arial;
+    font-weight: bolder;
+}
+button:hover{
+    background-color: #2b2158;
+}
+.submitButton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.formBoarder{
+  background-color: #E8EAF6;
+  padding: 50px;
+  border-radius: 10px;
+}
+.MainHeader{
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,0 +1,13 @@
+social-backend/socialCreateAccountService/src/main/resources/application.properties
+social-backend/discovery/src/main/resources/application.properties
+social-backend/getPosts/src/main/resources/application.properties
+social-backend/login/src/main/resources/application.properties
+social-backend/savePost2/src/main/resources/application.properties
+social-backend/SocialAuthLogIn/src/main/resources/application.properties
+social-backend/UserProfile/src/main/resources/application.properties
+
+social-backend/socialCreateAccountService/src/main/resources/credentials.json
+social-backend/socialCreateAccountService/src/main/resources/credentials.json
+Frontend/projectaqua/.env
+Frontend/projectaqua/public/firebase-messaging-sw.js
+social-backend/UserProfile/src/main/resources/fireBaseKey.json
