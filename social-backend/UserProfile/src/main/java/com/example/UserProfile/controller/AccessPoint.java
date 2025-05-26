@@ -130,31 +130,39 @@ public class AccessPoint {
     }
 
     @PostMapping("/createPost")
-    public int createProcess(@RequestParam int special,@RequestBody CreatePostRequest post){
-        //to test
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new RuntimeException("User not authenticated!");
-        }
-        /*
-        * first save the basic contents
-        * then save the images
-        * --> send the kafka part
-        * */
-        int result = 0;
-        //create the post object
-        Users userIDobj = new Users();
-        userIDobj.setUser_id(post.getUser_id());
-        postEntity innerObj = new postEntity(post.getContent_type(),post.getDate(),post.getDescription(),post.getTime(),post.getTitle(),userIDobj);
-        //validate
-        if(post.getUser_id() <= 0){
-            throw new RuntimeException("Invalid user ID");
-        }else{
-            //special -> if 1 wants to save contents or 0 not contents just send the message in here
-            //call the save function (for the main table only)
-            result = savePostProcess.savePostProcess(innerObj,special);
-        }
-        return result;
+    public ResponseEntity<String> createProcess(@RequestParam int special,@RequestBody CreatePostRequest post) throws Exception {
+       try{
+           //to test
+           Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+           if (auth == null || !auth.isAuthenticated()) {
+               throw new RuntimeException("User not authenticated!");
+           }
+           /*
+            * first save the basic contents
+            * then save the images
+            * --> send the kafka part
+            * */
+           int result = 0;
+           //create the post object
+           Users userIDobj = new Users();
+           userIDobj.setUser_id(post.getUser_id());
+           postEntity innerObj = new postEntity(post.getContent_type(),post.getDate(),post.getDescription(),post.getTime(),post.getTitle(),userIDobj);
+           //validate
+           if(post.getUser_id() <= 0){
+               throw new RuntimeException("Invalid user ID");
+           }else{
+               //special -> if 1 wants to save contents or 0 not contents just send the message in here
+               //call the save function (for the main table only)
+               result = savePostProcess.savePostProcess(innerObj,special);
+           }
+           if(result == 0){
+               return new ResponseEntity<String>("The values are null", HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
+           }else{
+               return new ResponseEntity<String>("Post created", HttpStatusCode.valueOf(HttpStatus.SC_OK));
+           }
+       }catch(Exception e){
+           return new ResponseEntity<String>("Error occured when saving the post : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
+       }
     }
     //resiter the user device
     @PostMapping("/registerUserDevice")

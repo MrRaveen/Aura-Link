@@ -44,7 +44,7 @@ public class SavePostProcess {
                 kafkaTemplate.send(TOPIC, outputData);
                 System.out.println("send message");
             }
-            return post.getPostid();
+            return outputData.getPostid();
         }catch(Exception e){
             throw new RuntimeException("Error occured in Save post process : " + e.toString());
         }

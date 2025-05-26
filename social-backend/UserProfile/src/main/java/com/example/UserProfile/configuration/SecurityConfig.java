@@ -2,6 +2,7 @@ package com.example.UserProfile.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -27,20 +28,33 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        //test
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        //----------------
                         .requestMatchers("/api/userAccount/createPost").authenticated() // Require authentication
                         .requestMatchers("/api/userAccount/getAllAccInfo").authenticated()
+                        .requestMatchers("/api/userAccount/createPost").authenticated()
+                        .requestMatchers("/api/userAccount/saveAllContents").authenticated()
                         .anyRequest().permitAll() // Allow other endpoints
                 )
+                //test
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Enable sessions
+                )
+                //--------------
                 .csrf(csrf -> csrf.disable()); // Disable CSRF for testing (re-enable later)
+
         return http.build();
     }
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList("http://localhost:5173/")); // Allow all origins
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // Allow all methods
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow all methods
         config.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
         config.setAllowCredentials(true);
+        //test
+        config.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config); // Apply to all endpoints

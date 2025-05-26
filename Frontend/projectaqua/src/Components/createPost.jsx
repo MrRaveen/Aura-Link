@@ -5,13 +5,15 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import "../CSS/index.css"
 import StickyNavbar from "../Components/navBar.jsx"
 import createPostCont from '../Controller/createPostCont.jsx';
+import getIDprocess from '../Controller/getTheuserID';
 
 const CreatePost = () => {
+  const userID = getIDprocess();
   //create post handler
   const createPostContHanler = () => {
     //var title = document.getElementById('titlePost').value;
-    createPostCont(title,description,selectedImages);
-}  
+    createPostCont(title,description,selectedImages,userID);
+  }  
 
   const [selectedImages, setSelectedImages] = useState([])
   const [title, setTitle] = useState("")
