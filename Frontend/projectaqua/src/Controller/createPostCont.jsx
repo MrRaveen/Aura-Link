@@ -25,7 +25,9 @@ const createPostCont = (title,des,imagesArr,userID) => {
         },{ withCredentials: true })
         .then(async response=>{
             if(response.status === 200){
-              alert(response.data);
+               if(response.data != "" || response.data != null){
+                alert('Post created');
+              }
             }else if(response.status === 409){
               alert('Error occured when saving data (409) : createPostCont.jsx \n' + response.data);
             }else if(response.status === 500){
@@ -37,7 +39,56 @@ const createPostCont = (title,des,imagesArr,userID) => {
         });
     }else{
       //sends 1
+        var postID;
+        var status = 0;
+        axios.post('http://localhost:8020/api/userAccount/createPost?special=1',{
+          content_type: "IMAGE",
+          date: dateGot,
+          description: des,
+          time: timeGot,
+          title: title,
+          user_id: userID
+        },{ withCredentials: true })
+        .then(async response=>{
+            if(response.status === 200){
+              if(response.data != "" || response.data != null){
+                postID = response.data;
+                status = 1;
+                //save images
+                 const formData = new FormData();
+      imagesArr.forEach((imageHolder)=>{
+        formData.append('file',imageHolder);
+      });
+       axios.post('http://localhost:8020/api/userAccount/saveAllContents?postID='+postID+'&userID='+userID,
+        formData,{ withCredentials: true })
+        .then(async response=>{
+            if(response.status === 200){
+              if(response.data != "" || response.data != null){
+                alert('Post created');
+              }
+            }else if(response.status === 409){
+              alert('Error occured when saving data (409) : createPostCont.jsx \n' + response.data);
+            }else if(response.status === 500){
+              alert('Internal server error (500): createPostCont.jsx');
+            }
+        })
+        .catch(error=>{
+          alert('Error occured when sending the request : createPostCont.jsx \n' + error);
+        });
+                //save images
+              }
+            }else if(response.status === 409){
+              status = 2;
+              alert('Error occured when saving data (409) : createPostCont.jsx \n' + response.data);
+            }else if(response.status === 500){
+              status = 3;
+              alert('Internal server error (500): createPostCont.jsx');
+            }
+        })
       //TODO: send the contents
+      if(status == 1){
+       
+      }
     }
   }
 }
