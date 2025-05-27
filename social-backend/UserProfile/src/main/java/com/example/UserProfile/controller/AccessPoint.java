@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.PageAttributes.MediaType;
 import java.security.Principal;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -158,7 +159,7 @@ public class AccessPoint {
            if(result == 0){
                return new ResponseEntity<String>("The values are null", HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
            }else{
-               return new ResponseEntity<String>("Post created", HttpStatusCode.valueOf(HttpStatus.SC_OK));
+               return new ResponseEntity<String>(String.valueOf(result), HttpStatusCode.valueOf(HttpStatus.SC_OK));
            }
        }catch(Exception e){
            return new ResponseEntity<String>("Error occured when saving the post : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));

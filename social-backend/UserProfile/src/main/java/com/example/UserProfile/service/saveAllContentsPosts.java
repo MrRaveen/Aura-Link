@@ -26,7 +26,7 @@ public class saveAllContentsPosts {
     private PostContentRepo postContentRepo;
     //kafka part
     private static final String TOPIC = "my_topic";
-    private final KafkaTemplate<String, postEntity> kafkaTemplate;
+    private final KafkaTemplate<String, postEntity> kafkaTemplate = null;
 
     /*
     * 1. get the post by ID
