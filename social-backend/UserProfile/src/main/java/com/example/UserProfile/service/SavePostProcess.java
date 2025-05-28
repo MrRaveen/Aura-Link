@@ -17,7 +17,8 @@ public class SavePostProcess {
     PostRepo postRepo;
 
     private static final String TOPIC = "my_topic";
-    private final KafkaTemplate<String, postEntity> kafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, postEntity> kafkaTemplate;
 
     public SavePostProcess(KafkaTemplate<String, postEntity> kafkaTemplate){
         this.kafkaTemplate = kafkaTemplate;

@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.PageAttributes.MediaType;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -112,7 +113,7 @@ public class AccessPoint {
     }
     //get the images (or contents reperately)
     @PostMapping("/saveAllContents")
-    public ResponseEntity<String> saveAllContents(@RequestParam("file")List<MultipartFile>file,@RequestParam int postID, @RequestParam int userID) throws Exception { //saves to the content table
+    public ResponseEntity<String> saveAllContents(@RequestParam("file") List<MultipartFile> file,@RequestParam int postID, @RequestParam int userID) throws Exception { //saves to the content table
         try{
             if(file.size() > 10){
                 throw new RuntimeException("Too many files (Max 10)");
@@ -126,6 +127,7 @@ public class AccessPoint {
             saveAllConAccessPoint.saveProcess(file,postID,userID);
             return new ResponseEntity<String>("Data saved",HttpStatusCode.valueOf(HttpStatus.SC_OK));
         } catch (Exception e) {
+            System.out.println("Error : " + e.toString());
             return new ResponseEntity<String>("Error occurred when entering contents : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
         }
     }

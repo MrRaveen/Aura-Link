@@ -29,7 +29,8 @@ public class UserProfileApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry reg){
-				reg.addMapping("/**").allowedOrigins("http://localhost:5173/").allowedMethods("*").allowedHeaders("*").allowCredentials(true).maxAge(3600);
+			
+				reg.addMapping("/**").allowedOrigins("http://localhost:5173").allowedMethods("*").allowedHeaders("*").allowCredentials(true).maxAge(3600);
 			}
 		};
 	}

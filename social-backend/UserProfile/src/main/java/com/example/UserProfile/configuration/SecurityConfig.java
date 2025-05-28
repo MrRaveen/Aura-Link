@@ -28,20 +28,16 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        //Add these
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        //----------------
                         .requestMatchers("/api/userAccount/createPost").authenticated() // Require authentication
                         .requestMatchers("/api/userAccount/getAllAccInfo").authenticated()
                         .requestMatchers("/api/userAccount/createPost").authenticated()
-                        //.requestMatchers("/api/userAccount/saveAllContents").authenticated()
+                        .requestMatchers("/api/userAccount/saveAllContents").authenticated()
                         .anyRequest().permitAll() // Allow other endpoints
                 )
-                //Add these
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Enable sessions
                 )
-                //--------------
                 .csrf(csrf -> csrf.disable()); // Disable CSRF for testing (re-enable later)
 
         return http.build();
@@ -49,11 +45,11 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173/")); // Allow all origins
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Allow all origins
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allow all methods
         config.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
+        
         config.setAllowCredentials(true);
-        //Add this
         config.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
