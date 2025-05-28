@@ -10,9 +10,9 @@ import getIDprocess from '../Controller/getTheuserID';
 const CreatePost = () => {
   const userID = getIDprocess();
   //create post handler
-  const createPostContHanler = () => {
+  const createPostContHanler = async () => {
     //var title = document.getElementById('titlePost').value;
-    createPostCont(title,description,selectedImages,userID);
+    await createPostCont(title,description,selectedImages,userID);
   }  
 
   const [selectedImages, setSelectedImages] = useState([])

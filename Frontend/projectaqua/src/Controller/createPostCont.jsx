@@ -57,10 +57,18 @@ const createPostCont = (title,des,imagesArr,userID) => {
                 //save images
                  const formData = new FormData();
       imagesArr.forEach((imageHolder)=>{
-        formData.append('file',imageHolder);
+        formData.append('file',imageHolder.file);
       });
+      console.log(formData);//FIXME:TEST
        axios.post('http://localhost:8020/api/userAccount/saveAllContents?postID='+postID+'&userID='+userID,
-        formData,{ withCredentials: true })
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+           'Content-Type': 'multipart/form-data'
+          }
+        }    
+      )
         .then(async response=>{
             if(response.status === 200){
               if(response.data != "" || response.data != null){
