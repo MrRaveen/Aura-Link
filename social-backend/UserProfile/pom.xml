@@ -130,7 +130,7 @@
 <!--			<artifactId>spring-boot-starter-log4j2</artifactId>-->
 <!--		</dependency>-->
 
-     <!--jsr310-->
+        <!--jsr310-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
@@ -179,6 +179,12 @@
 <!--			<artifactId>spring-messaging</artifactId>-->
 <!--			<version>6.0.13</version>-->
 <!--		</dependency>-->
+        <!--json-->
+        <dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20240303</version>
+</dependency>
 		<!--Spring security-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

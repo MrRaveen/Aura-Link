@@ -2,12 +2,19 @@ package com.example.UserProfile.entity;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PostContents implements Serializable {
     private static final long serialVersionUID = 1L;
+    @JsonProperty("contentid")
     private int contentid;
+    @JsonProperty("media_name")
     private String media_name;
+    @JsonProperty("meta_data")
     private String meta_data;
+    @JsonProperty("type")
     private String type;
+    @JsonProperty("postid")
     private int postid;
 
     public void setContentid(int contentid) {

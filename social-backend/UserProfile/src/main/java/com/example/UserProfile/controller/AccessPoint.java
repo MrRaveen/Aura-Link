@@ -68,12 +68,16 @@ public class AccessPoint {
     }
     //remove posts
     @DeleteMapping("/removePost")
-    public String removePost(@RequestParam int postId) throws Exception {
+    public ResponseEntity<String> removePost(@RequestParam int postId) throws Exception {
         try{
             String result = postRemoveProcess.process(postId);
-            return result;
+            if(result == "Post Removed Successfully") {
+            	return new ResponseEntity<String>(result,HttpStatusCode.valueOf(HttpStatus.SC_OK));
+            }else {
+            	return new ResponseEntity<String>(result,HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
+            }
         }catch(Exception e){
-            return "Error occured when removing post : "+  e.getMessage().toString();
+        	return new ResponseEntity<String>("Error occured when removing post: (server): "+e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
         }
     }
     //get the comments

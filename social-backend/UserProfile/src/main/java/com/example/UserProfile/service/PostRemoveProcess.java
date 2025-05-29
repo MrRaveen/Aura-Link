@@ -5,13 +5,21 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.example.UserProfile.entity.PostContentEntity;
 import com.example.UserProfile.entity.PostContents;
 import com.example.UserProfile.repository.PostRepo;
+import com.example.UserProfile.response.messageResponse;
+import com.google.api.client.json.Json;
+
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -24,6 +32,7 @@ public class PostRemoveProcess {
     private PostRepo postRepo;
     @Autowired
     private BlobServiceClient blobServiceClient;
+    @Transactional
     public String process(int postId) throws Exception {
         try{
             RestTemplate restTemplate = new RestTemplate();
@@ -32,6 +41,16 @@ public class PostRemoveProcess {
             MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
             converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
             messageConverters.add(converter);
+            
+            //String http converter
+            StringHttpMessageConverter stringConverter  = new StringHttpMessageConverter();
+            stringConverter.setSupportedMediaTypes(List.of(
+                MediaType.TEXT_PLAIN,
+                MediaType.TEXT_HTML
+            ));
+            messageConverters.add(stringConverter);
+            //String http converter
+            
             restTemplate.setMessageConverters(messageConverters);
 
             HttpHeaders headers = new HttpHeaders();
@@ -59,28 +78,32 @@ public class PostRemoveProcess {
             //get the post content names
             uri = "http://localhost:3000/getPostContentName/"+postId;
             ResponseEntity<List<PostContents>> responseEntity3 = restTemplate.exchange(
-              uri,
-              HttpMethod.GET,
-              null,
-              new ParameterizedTypeReference<List<PostContents>>() {}
-            );
+                    uri,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<PostContents>>() {}
+                  );
             List<PostContents>contentList = responseEntity3.getBody();//stores the content name list
+            //System.out.println(contentList);
             //remove the post contents (table)
             uri = "http://localhost:3000/removePostDetailsAll/"+postId;
-            ResponseEntity<?> responseEntity4 = restTemplate.exchange(
+            ResponseEntity<messageResponse> responseEntity4 = restTemplate.exchange(
                     uri,
                     HttpMethod.DELETE,
                     null,
-                    new ParameterizedTypeReference<>() {}
+                    messageResponse.class
             );
-            //remove the actual contents (azure)
-            contentList.forEach(postContentEntity -> {
-                BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient("postcontents");
-                boolean result = containerClient.getBlobClient(postContentEntity.getMedia_name()).deleteIfExists();
-            });
             postRepo.deleteById(postId);
+           //remove the actual contents (azure)
+            if(!contentList.isEmpty()) {
+            	contentList.forEach(postContentEntity -> {
+                    BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient("postcontents");
+                    boolean result = containerClient.getBlobClient(postContentEntity.getMedia_name()).deleteIfExists();
+                });	
+            }
             return "Post Removed Successfully";
         }catch(Exception e){
+        	TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
             throw new Exception("Error occurred when removing post (service) : " + e.getMessage());
         }
     }
