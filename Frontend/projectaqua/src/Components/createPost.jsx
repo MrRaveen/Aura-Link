@@ -6,13 +6,15 @@ import "../CSS/index.css"
 import StickyNavbar from "../Components/navBar.jsx"
 import createPostCont from '../Controller/createPostCont.jsx';
 import getIDprocess from '../Controller/getTheuserID';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePost = () => {
+  const navigate = useNavigate();//to navigate
   const userID = getIDprocess();
   //create post handler
   const createPostContHanler = async () => {
     //var title = document.getElementById('titlePost').value;
-    await createPostCont(title,description,selectedImages,userID);
+    await createPostCont(title,description,selectedImages,userID,navigate);
   }  
 
   const [selectedImages, setSelectedImages] = useState([])

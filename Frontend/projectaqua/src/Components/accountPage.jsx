@@ -12,6 +12,8 @@ import UserAccountPersonal from '../Controller/UserAccountPersonal.jsx';
 import { onMessage } from 'firebase/messaging';
 import getIDprocess from '../Controller/getTheuserID';
 import firebaseConnect from '../Controller/firebaseConnect.jsx';
+import removePost from '../Controller/removePost.jsx';
+import removeCache from '../Controller/removeCache';
 
 //TODO: use mappings - later
 function AccountPage() {
@@ -52,6 +54,24 @@ document.getElementById('profile_pic_url').innerHTML = `
 `;
     });
 
+    const handleRemovePart = async (postID) => {
+        try{
+              if(confirm('Are you sure you want to remove the post?')){
+                 const removePostObj = new removePost(postID);
+                 const response = await removePostObj.processRemove();
+                 const removeCacheGlobal = new removeCache(obtainedUserID);//remove cache
+                 const result_remove_cache = await removeCacheGlobal.removeRequest();
+                 alert(response); 
+                 window.location.reload(); 
+                }
+        }catch(error){
+            alert(error);
+        }
+    }
+
+    const editProfileHandler = () => {
+        navigate('/editProfile');
+    }
     const handleCreatePostPage = () => {
         navigate('/createPost');
     }
@@ -79,10 +99,13 @@ contentsForText.innerHTML = `
         <div class="flex"><p style="color: white; font-weight: 500;" class="text-center mb-1">Date: ${postHolder.date}</p></div>
     <div class="flex"><p class="text-center mb-1 mb-1" style="color: white; font-weight: 500;">Time: ${postHolder.time}</p></div>  
     <div class="bg-gray-200 rounded flex space-x-4 items-center justify-center"><label>👍 ${allReactionsForText.like}</label><label>😆 ${allReactionsForText.laugh}</label><label>🥺 ${allReactionsForText.sad}</label><label>❤️ ${allReactionsForText.love}</label></div>
-    <button class='bg-blue-600 rounded'>Comments</button>
+    <button class='bg-blue-600 rounded'>Comments</button><div class='w-2'></div><button post-remove-btn class='bg-blue-600 rounded'>Remove</button>
     </article><br/>`; 
-document.getElementById('articleSection').appendChild(contentsForText);    //no contents
-            console.log('No contents');//FIXME: test
+    document.getElementById('articleSection').appendChild(contentsForText);//no contents
+    const btnRemoveText = contentsForText.querySelector('[post-remove-btn]');
+    btnRemoveText.addEventListener('click', () => {
+        handleRemovePart(postHolder.postid);
+    });
         }else{
             //append contents
             var requiredData = out3[count];//post contents array set
@@ -143,7 +166,7 @@ document.getElementById('articleSection').appendChild(contentsForText);    //no 
                     <div className="text-center">
                         <h2 className="text-2xl font-bold text-gray-800 mb-1" id='mainName'></h2>
                         <p className="text-gray-600 text-sm" id='email'>@adventure_john</p>
-                        <button className="rounded group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-rose-300 hover:before:[box-shadow:_20px_20px_20px_30px_#a21caf] duration-500 before:duration-500 hover:duration-500 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur origin-left hover:decoration-2 hover:text-rose-300 relative bg-neutral-800 h-16 w-64 border text-left p-3 text-gray-50 text-base font-bold rounded-lg  overflow-hidden  before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-violet-500 before:rounded-full before:blur-lg  after:absolute after:z-10 after:w-20 after:h-20 after:content['']  after:bg-rose-300 after:right-8 after:top-3 after:rounded-full after:blur-lg">
+                        <button onClick={() => editProfileHandler()} className="rounded group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-rose-300 hover:before:[box-shadow:_20px_20px_20px_30px_#a21caf] duration-500 before:duration-500 hover:duration-500 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur origin-left hover:decoration-2 hover:text-rose-300 relative bg-neutral-800 h-16 w-64 border text-left p-3 text-gray-50 text-base font-bold rounded-lg  overflow-hidden  before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-violet-500 before:rounded-full before:blur-lg  after:absolute after:z-10 after:w-20 after:h-20 after:content['']  after:bg-rose-300 after:right-8 after:top-3 after:rounded-full after:blur-lg">
                          <FontAwesomeIcon icon={faUserPlus} className="mr-2" /> Edit
                         </button>
                         <button onClick={()=>handleCreatePostPage()} class="rounded group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-rose-300 hover:before:[box-shadow:_20px_20px_20px_30px_#a21caf] duration-500 before:duration-500 hover:duration-500 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur origin-left hover:decoration-2 hover:text-rose-300 relative bg-neutral-800 h-16 w-64 border text-left p-3 text-gray-50 text-base font-bold rounded-lg  overflow-hidden  before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-violet-500 before:rounded-full before:blur-lg  after:absolute after:z-10 after:w-20 after:h-20 after:content['']  after:bg-rose-300 after:right-8 after:top-3 after:rounded-full after:blur-lg">

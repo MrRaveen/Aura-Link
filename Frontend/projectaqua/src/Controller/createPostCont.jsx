@@ -1,7 +1,7 @@
 /* eslint-disable no-empty */
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
-const createPostCont = (title,des,imagesArr,userID) => {
+const createPostCont = (title,des,imagesArr,userID,navigate) => {
     const now = new Date();
     const dateGot = now.toISOString().split('T')[0]; 
     const hours = String(now.getHours()).padStart(2, '0');
@@ -9,7 +9,6 @@ const createPostCont = (title,des,imagesArr,userID) => {
     const seconds = String(now.getSeconds()).padStart(2, '0');
     const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
     const timeGot = `${hours}:${minutes}:${seconds}.${milliseconds}000`; 
-  
     if(title == "" || des == ""){
     alert('Title and description should not be empty');
   }else{
@@ -27,6 +26,14 @@ const createPostCont = (title,des,imagesArr,userID) => {
             if(response.status === 200){
                if(response.data != "" || response.data != null){
                 alert('Post created');
+                //remove cache
+                axios.delete('http://localhost:8020/api/userAccount/removeCache?userID='+userID,{ withCredentials: true }).then(responseRemove => {
+                  if(responseRemove.data == 'removed'){
+                    navigate('/accountPath');
+                  }else{
+                    alert('Cache did not removed: createPostCont.jsx \n' + responseRemove.data);
+                  }
+                });
               }
             }else if(response.status === 409){
               alert('Error occured when saving data (409) : createPostCont.jsx \n' + response.data);
@@ -73,6 +80,14 @@ const createPostCont = (title,des,imagesArr,userID) => {
             if(response.status === 200){
               if(response.data != "" || response.data != null){
                 alert('Post created');
+                //remove cache
+                axios.delete('http://localhost:8020/api/userAccount/removeCache?userID='+userID,{ withCredentials: true }).then(responseRemove => {
+                  if(responseRemove.data == 'removed'){
+                    navigate('/accountPath');
+                  }else{
+                    alert('Cache did not removed: createPostCont.jsx \n' + responseRemove.data);
+                  }
+                });
               }
             }else if(response.status === 409){
               alert('Error occured when saving data (409) : createPostCont.jsx \n' + response.data);

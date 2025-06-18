@@ -13,6 +13,7 @@ import ViewAllImages from './Components/viewAllImages.jsx';
 import { CookiesProvider, useCookies } from 'react-cookie';
 import NotificationPage from './Components/notificationPage.jsx';
 import CreatePost from './Components/createPost.jsx';
+import EditProfile from './Components/editProfile.jsx';
 import {
   BrowserRouter as Router,
   Routes,
@@ -35,7 +36,8 @@ function App(){
         <Route path='/accountPath' element={<AccountPage/>}/>
         <Route path = '/ViewAllImages' element={<ViewAllImages/>}/>
         <Route path = '/notificationPage' element = {<NotificationPage/>}/>
-        <Route path = '/createPost' element = {<CreatePost/>}/>     
+        <Route path = '/createPost' element = {<CreatePost/>}/>  
+        <Route path='/editProfile' element = {<EditProfile/>}/>   
       </Routes>
     </Router>
     </>
