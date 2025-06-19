@@ -14,7 +14,7 @@ export default function EditProfile() {
     };
   }, [isSidebarOpen]);
 
-  const navItems = ["Profile", "Account", "Security", "Notifications", "Privacy"];
+  const navItems = ["Profile", "Edit Account", "Security", "Notifications", "Privacy"];
 
   const handleSidebarClick = (item) => {
     setActiveTab(item);

@@ -3,10 +3,13 @@ package com.example.UserProfile.controller;
 import com.example.UserProfile.entity.*;
 import com.example.UserProfile.request.CreatePostRequest;
 import com.example.UserProfile.request.updatePostRequest;
+import com.example.UserProfile.request.userAccUpdateRequest;
 import com.example.UserProfile.request.userAddressRequest;
 import com.example.UserProfile.response.OtherInfoRes;
 import com.example.UserProfile.response.PostAllContainers;
 import com.example.UserProfile.service.*;
+import com.google.api.Http;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,8 @@ public class AccessPoint {
     private SavePostProcess savePostProcess;
     @Autowired
     private saveAllContentsPosts saveAllConAccessPoint;
+    @Autowired
+    private updateUserProfile profileUpdate;
     //get the profile information (public)
     @GetMapping("/getAllAccInfo")
     public ResponseEntity<OtherInfoRes> getAllAccPrimaryInfo(@RequestParam int userId) {
@@ -181,6 +186,29 @@ public class AccessPoint {
         } catch (Exception e) {
             return new ResponseEntity<String>("Error occurred when registering user device : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
         }
+    }
+    //edit user details (account)
+    @PutMapping("/updateProfile")
+    public ResponseEntity<String> updateProcess(@RequestBody userAccUpdateRequest updateRequestObj){
+    	try {
+    		//get the details 
+        	if(updateRequestObj.getChoice() == 1) {
+        		//update username and password
+        		//generate a code and store in mongo db
+        		//send a code to email
+        		//if it is correct, --> go to reset page, remove temp data
+        		boolean outputEmailResult = profileUpdate.sendCodePart(updateRequestObj.getEmail());
+            	return new ResponseEntity<String>("sent",HttpStatusCode.valueOf(HttpStatus.SC_ACCEPTED));
+        	}else if(updateRequestObj.getChoice() == 2) {
+        		//update profile info
+        		boolean outputIpdate = profileUpdate.updateProfileProcess(updateRequestObj);
+            	return new ResponseEntity<String>("Updated",HttpStatusCode.valueOf(HttpStatus.SC_ACCEPTED));
+        	}else {
+            	return new ResponseEntity<String>("Nothing",HttpStatusCode.valueOf(HttpStatus.SC_BAD_REQUEST));	
+        	}
+    	}catch(Exception e) {
+    		return new ResponseEntity<String>("Error occured in the controller (AccessPoint.java) : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR));
+    	}
     }
     @DeleteMapping("/removeCache")
     public String removeCache(@RequestParam int userID) {

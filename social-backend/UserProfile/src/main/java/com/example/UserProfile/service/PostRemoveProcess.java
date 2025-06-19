@@ -96,7 +96,7 @@ public class PostRemoveProcess {
             postRepo.deleteById(postId);
            //remove the actual contents (azure)
             if(!contentList.isEmpty()) {
-            	contentList.forEach(postContentEntity -> {
+                contentList.forEach(postContentEntity -> {
                     BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient("postcontents");
                     boolean result = containerClient.getBlobClient(postContentEntity.getMedia_name()).deleteIfExists();
                 });	

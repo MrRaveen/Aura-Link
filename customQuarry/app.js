@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+app.use(express.json());
 //querry types
 const { QueryTypes, where } = require('sequelize');
 //DB Connection
@@ -322,12 +323,52 @@ app.delete('/removePostDetailsAll/:postID',(req,res)=>{
                 postid : req.params.postID
             }
         }).then(response => {
-            res.send('Data removed');
+            const jsonRes = {
+                message: "Removed",
+                ststus: 200
+            }
+            res.send(jsonRes);
         }).catch((error)=>{
-            res.send('Error occured when removing data : ' + error);
+            const jsonRes = {
+                message: "Error occured",
+                ststus: 200
+            }
+            res.send(jsonRes);
         });
     }).catch((error)=>{
-         res.send('Error occured when removing data : ' + error);
+            const jsonRes = {
+                message: "Error occured",
+                ststus: 200
+            }
+            res.send(jsonRes);
     });
+});
+app.put('/updateProfile/',async (req,res) => {
+    //get info
+    const { userID,job, address, age, bio, birth_date, first_name, joined_at, last_name, mobile} = req.body;
+    sequelize.sync().then(() => {
+    userProfile.update(
+        { 
+            job: job,
+            address: address,
+            age: age,
+            bio: bio,
+            birth_date: birth_date,
+            first_name: first_name,
+            joined_at: joined_at,
+            last_name: last_name,
+            mobile: mobile
+        },
+        {
+            where: { user_id: userID }
+        }
+    ).then(response => {
+        res.status(200).send("Data updated");
+    }).catch((error) => {
+        res.status(500).send("Error occurred during update");
+    });
+}).catch((error) => {
+    res.status(500).send("Database connection error");
+});
 });
 app.listen(3000);
