@@ -1,12 +1,20 @@
 package com.example.UserProfile.service;
 
 import com.example.UserProfile.configuration.Credentials;
+import com.example.UserProfile.entity.CheckEmailVerificationMongo;
+import com.example.UserProfile.entity.Users;
+import com.example.UserProfile.repository.CheckEmailVerificationMongoRepo;
+import com.example.UserProfile.repository.UsersRepo;
 import com.example.UserProfile.request.userAccUpdateRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.andrewoma.dexx.collection.internal.base.Break;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,12 +24,16 @@ import java.time.Period;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.transactional.*;
 import com.mailjet.client.transactional.response.SendEmailsResponse;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +45,40 @@ import java.security.SecureRandom;
 public class updateUserProfile {
 	@Autowired
 	private Credentials cre;
+	@Autowired
+	private UsersRepo userRepo;
+	@Autowired
+	private CheckEmailVerificationMongoRepo mongoRepoObj;
     private static final Logger logger = LogManager.getLogger(updateUserProfile.class);
+    
+    //function to send the email confirmation
+    public void sendTheEmailToUser(String email, int userID) throws Exception {
+    	try {
+    		SecureRandom secureRandom = new SecureRandom();
+            int randomNumber = secureRandom.nextInt(100);
+            MailjetClient client = cre.getMailConnection();
+            TransactionalEmail message1 = TransactionalEmail
+                    .builder()
+                    .to(new SendContact(email, "stanislav"))
+                    .from(new SendContact("saliyaautocare52@gmail.com", "Mailjet integration test"))
+                    .htmlPart("<h1>Your verification code : " + randomNumber + "</h1>")
+                    .subject("This is the subject")
+                    .trackOpens(TrackOpens.ENABLED)
+                    .header("test-header-key", "test-value")
+                    .customID("custom-id-value")
+                    .build();
+            SendEmailsRequest request = SendEmailsRequest
+                    .builder()
+                    .message(message1) // you can add up to 50 messages per request
+                    .build();
+            //save to the mongo db 
+            CheckEmailVerificationMongo passObj = new CheckEmailVerificationMongo(String.valueOf(userID), String.valueOf(randomNumber));
+            mongoRepoObj.save(passObj);
+            SendEmailsResponse response = request.sendWith(client);
+    	}catch(Exception e) {
+    		throw new Exception("Error occured when sending the email (fun --> sendTheEmailToUser): " + e.toString());
+    	}
+    }
     public Boolean updateProfileProcess(userAccUpdateRequest request) throws Exception {
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -86,30 +131,124 @@ public class updateUserProfile {
             throw new Exception("Error occurred when updating the profile: " + e.getMessage(), e);
         }
     }
-    public Boolean sendCodePart(String email) throws Exception{
+    public Boolean sendCodePart(int userID) throws Exception{
     	try {
-            SecureRandom secureRandom = new SecureRandom();
-            int randomNumber = secureRandom.nextInt(100);
-            MailjetClient client = cre.getMailConnection();
-            TransactionalEmail message1 = TransactionalEmail
-                    .builder()
-                    .to(new SendContact(email, "stanislav"))
-                    .from(new SendContact("saliyaautocare52@gmail.com", "Mailjet integration test"))
-                    .htmlPart("<h1>Your verification code : " + randomNumber + "</h1>")
-                    .subject("This is the subject")
-                    .trackOpens(TrackOpens.ENABLED)
-                    .header("test-header-key", "test-value")
-                    .customID("custom-id-value")
-                    .build();
-            SendEmailsRequest request = SendEmailsRequest
-                    .builder()
-                    .message(message1) // you can add up to 50 messages per request
-                    .build();
-            SendEmailsResponse response = request.sendWith(client);
-
-    		return true;
+    		//get the userEmail
+    		Optional<Users> foundUser = userRepo.findById(userID);
+    		if(foundUser.isEmpty()) {
+    			throw new Exception("The user not found");
+    		}else {
+    			AtomicReference<String> gotMail = new AtomicReference<>("");
+        		foundUser.ifPresent(Users -> {
+        		    gotMail.set(Users.getEmail());
+        		});
+    			//send the email to user
+        		sendTheEmailToUser(gotMail.toString(),userID);
+//                SecureRandom secureRandom = new SecureRandom();
+//                int randomNumber = secureRandom.nextInt(100);
+//                MailjetClient client = cre.getMailConnection();
+//                TransactionalEmail message1 = TransactionalEmail
+//                        .builder()
+//                        .to(new SendContact(gotMail.toString(), "stanislav"))
+//                        .from(new SendContact("saliyaautocare52@gmail.com", "Mailjet integration test"))
+//                        .htmlPart("<h1>Your verification code : " + randomNumber + "</h1>")
+//                        .subject("This is the subject")
+//                        .trackOpens(TrackOpens.ENABLED)
+//                        .header("test-header-key", "test-value")
+//                        .customID("custom-id-value")
+//                        .build();
+//                SendEmailsRequest request = SendEmailsRequest
+//                        .builder()
+//                        .message(message1) // you can add up to 50 messages per request
+//                        .build();
+//                //save to the mongo db 
+//                CheckEmailVerificationMongo passObj = new CheckEmailVerificationMongo(String.valueOf(userID), String.valueOf(randomNumber));
+//                mongoRepoObj.save(passObj);
+//                SendEmailsResponse response = request.sendWith(client);
+        		return true;
+    		}
     	}catch(Exception e) {
     		throw new Exception("Error occured when sending code (updateUserProfile.jsva) : " + e.toString());
+    	}
+    }
+    public String verifyAndUpdate(String verificationCode, userAccUpdateRequest updateRequestObj) throws Exception{
+    	try {
+    		//find the user from mongodb
+    		/*
+    		 * or not throw an excep
+    		 * then check the code
+    		 * if wrong, return error str
+    		 * */
+			AtomicReference<Boolean> status = new AtomicReference<>(false);
+    		Optional<CheckEmailVerificationMongo> findByID = mongoRepoObj.findById(String.valueOf(updateRequestObj.getUserID()));
+    		if(findByID.isEmpty()) {
+    			return "Cannot find the user. User credentials update failed";
+    		}else {
+    			findByID.ifPresent(verification -> {
+        		   String selectedID = verification.getVerificationID();
+    				if(verificationCode.equals(selectedID)) {
+        		    	 Users user = userRepo.findById(updateRequestObj.getUserID())
+        		                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        		    	 user.setUsername(updateRequestObj.getUserName());
+        		    	 user.setPassword_hash(updateRequestObj.getPassword());
+        		    	 userRepo.save(user);
+        		    	 status.set(true);
+        		    }else {
+        		    	status.set(false);
+        		    }
+        		});
+    		}
+    		if(status.get() == true) {
+    			//remove the mongodb data
+    			mongoRepoObj.deleteById(String.valueOf(updateRequestObj.getUserID()));
+        		return "Password updated";
+    		}else {
+        		return "Invalid verification code";
+    		}
+    	}catch(Exception e) {
+    		throw new Exception("Error occured when updating (updateUserProfile.java) : " + e.toString());
+    	}
+    }
+    //updates the email of the user
+    public String updateEmail(String email, int userID, int mode, String verificationCode) throws Exception {
+    	try {
+    		if(mode == 1) {
+    			//send code
+    			sendTheEmailToUser(email,userID);
+    			return "An email is sent to " + email + " email address";
+    		}else if(mode == 2) {
+    			//verify the code
+    			AtomicReference<Boolean> status = new AtomicReference<>(false);
+        		Optional<CheckEmailVerificationMongo> findByID = mongoRepoObj.findById(String.valueOf(userID));
+        		if(findByID.isEmpty()) {
+        			return "Cannot find the user. User email update failed";
+        		}else {
+        			findByID.ifPresent(verification -> {
+            		   String selectedID = verification.getVerificationID();
+        				if(verificationCode.equals(selectedID)) {
+        					//update email by userID
+        					Users user = userRepo.findById(userID)
+           		                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        					user.setEmail(email);
+        					userRepo.save(user);
+            		    	 status.set(true);
+            		    }else {
+            		    	status.set(false);
+            		    }
+            		});
+        		}
+        		if(status.get() == true) {
+        			//remove the mongodb data
+        			mongoRepoObj.deleteById(String.valueOf(userID));
+            		return "Email updated";
+        		}else {
+            		return "Invalid varification code";
+        		}
+    		}else {
+    			return "Invalid mode code";
+    		}
+    	}catch(Exception e) {
+    		throw new Exception("Error occured when updating email (updateUserProfile.java) : " + e.toString());
     	}
     }
 }

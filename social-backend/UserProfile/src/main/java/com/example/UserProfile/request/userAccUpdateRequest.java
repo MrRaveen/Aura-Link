@@ -40,8 +40,6 @@ public class userAccUpdateRequest {
     private String userName;
     @JsonProperty("password")
     private String password;
-    @JsonProperty("email")
-    private String email;
     @JsonProperty("choice")
     private int choice;
     
@@ -50,7 +48,7 @@ public class userAccUpdateRequest {
 
     public userAccUpdateRequest(int userID, String first_name, String last_name, String bio, String profile_pic_url,
 			Timestamp birth_date, int mobile, String address, String job, String userName, String password,
-			String email, int choice) {
+			 int choice) {
 		super();
 		this.userID = userID;
 		this.first_name = first_name;
@@ -63,7 +61,6 @@ public class userAccUpdateRequest {
 		this.job = job;
 		this.userName = userName;
 		this.password = password;
-		this.email = email;
 		this.choice = choice;
 	}
 
@@ -103,15 +100,7 @@ public class userAccUpdateRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
+	
 	public int getChoice() {
 		return choice;
 	}

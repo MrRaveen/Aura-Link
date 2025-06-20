@@ -197,8 +197,8 @@ public class AccessPoint {
         		//generate a code and store in mongo db
         		//send a code to email
         		//if it is correct, --> go to reset page, remove temp data
-        		boolean outputEmailResult = profileUpdate.sendCodePart(updateRequestObj.getEmail());
-            	return new ResponseEntity<String>("sent",HttpStatusCode.valueOf(HttpStatus.SC_ACCEPTED));
+        		boolean outputEmailResult = profileUpdate.sendCodePart(updateRequestObj.getUserID());
+            	return new ResponseEntity<String>("A varification code is sent to your email.",HttpStatusCode.valueOf(HttpStatus.SC_ACCEPTED));
         	}else if(updateRequestObj.getChoice() == 2) {
         		//update profile info
         		boolean outputIpdate = profileUpdate.updateProfileProcess(updateRequestObj);
@@ -208,6 +208,34 @@ public class AccessPoint {
         	}
     	}catch(Exception e) {
     		return new ResponseEntity<String>("Error occured in the controller (AccessPoint.java) : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR));
+    	}
+    }
+    //check verification
+    @PutMapping("/checkVerification")
+    public ResponseEntity<String>checkAndUpdate(@RequestParam String verificationCode, @RequestBody userAccUpdateRequest updateRequestObj){
+    	try {
+    		//check verification
+    		String output = profileUpdate.verifyAndUpdate(verificationCode, updateRequestObj);
+    		return new ResponseEntity<String>(output,HttpStatusCode.valueOf(HttpStatus.SC_OK));
+    	}catch(Exception e) {
+    		return new ResponseEntity<String>("Error occured in the controller : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
+    	}
+    }
+    //change the email
+    @PutMapping("/changeEmail")
+    public ResponseEntity<String>updateEmail(@RequestParam String email, @RequestParam int userID, @RequestParam int mode, @RequestParam String verificationCode){
+    	try {
+    		/*mode --> 1 = send code
+    		 * mode--> 2 = check and save 
+    		 * send the code to mail
+    		 * save to mongo
+    		 * check it is true
+    		 * if true update the mail and remove the data from mongo
+    		 * */
+    		String outputResult = profileUpdate.updateEmail(email, userID, mode, verificationCode);
+    		return new ResponseEntity<String>(outputResult,HttpStatusCode.valueOf(HttpStatus.SC_OK)); 
+    	}catch(Exception e) {
+    		return new ResponseEntity<String>("Error occured when updating email (AccessPoint.java) : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)); 
     	}
     }
     @DeleteMapping("/removeCache")
