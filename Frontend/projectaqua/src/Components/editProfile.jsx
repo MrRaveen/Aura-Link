@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import StickyNavbar from "../Components/navBar.jsx";
 import SettingsProfile from "../Components/settingsCompProfile.jsx";
+import UpdateSection from "./updateSection.jsx";
 import "../CSS/index.css";
 
 export default function EditProfile() {
@@ -23,6 +24,8 @@ export default function EditProfile() {
   const renderContent = () => {
     if (activeTab === "Profile") {
       return <SettingsProfile />;
+    }else if(activeTab === "Edit Account"){
+      return <UpdateSection></UpdateSection>;
     }
     return (
       <section className="bg-white p-6 rounded-lg shadow">

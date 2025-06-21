@@ -1,5 +1,6 @@
 package com.example.UserProfile.controller;
 
+import com.azure.core.annotation.Put;
 import com.example.UserProfile.entity.*;
 import com.example.UserProfile.request.CreatePostRequest;
 import com.example.UserProfile.request.updatePostRequest;
@@ -187,6 +188,16 @@ public class AccessPoint {
             return new ResponseEntity<String>("Error occurred when registering user device : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_CONFLICT));
         }
     }
+    
+    //get the profile info (all) for the update section
+    @GetMapping("/getProfileInfoUser")
+    public ResponseEntity<User_profiles> getProcessProfile(@RequestParam int userID) {
+    	try {
+    		return new ResponseEntity<User_profiles>(profileUpdate.getProfileProcess(userID),HttpStatusCode.valueOf(HttpStatus.SC_OK));
+    	}catch(Exception e) {
+    		return new ResponseEntity<User_profiles>(new User_profiles(),HttpStatusCode.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR));
+    	}
+    }
     //edit user details (account)
     @PutMapping("/updateProfile")
     public ResponseEntity<String> updateProcess(@RequestBody userAccUpdateRequest updateRequestObj){
@@ -236,6 +247,15 @@ public class AccessPoint {
     		return new ResponseEntity<String>(outputResult,HttpStatusCode.valueOf(HttpStatus.SC_OK)); 
     	}catch(Exception e) {
     		return new ResponseEntity<String>("Error occured when updating email (AccessPoint.java) : " + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)); 
+    	}
+    }
+    //change the profile image
+    @PutMapping("/updateProfileImage")
+    public ResponseEntity<String>updateProfileImage(){
+    	try {
+    		return new ResponseEntity<String>("ok",HttpStatusCode.valueOf(HttpStatus.SC_OK)); 
+    	}catch(Exception e) {
+    		return new ResponseEntity<String>("error" + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_OK));
     	}
     }
     @DeleteMapping("/removeCache")

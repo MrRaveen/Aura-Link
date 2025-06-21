@@ -2,6 +2,7 @@ package com.example.UserProfile.service;
 
 import com.example.UserProfile.configuration.Credentials;
 import com.example.UserProfile.entity.CheckEmailVerificationMongo;
+import com.example.UserProfile.entity.User_profiles;
 import com.example.UserProfile.entity.Users;
 import com.example.UserProfile.repository.CheckEmailVerificationMongoRepo;
 import com.example.UserProfile.repository.UsersRepo;
@@ -12,6 +13,8 @@ import com.github.andrewoma.dexx.collection.internal.base.Break;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,8 +24,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -249,6 +254,33 @@ public class updateUserProfile {
     		}
     	}catch(Exception e) {
     		throw new Exception("Error occured when updating email (updateUserProfile.java) : " + e.toString());
+    	}
+    }
+    //get the profile info
+    public User_profiles getProfileProcess(int userID) throws Exception {
+    	try {
+    		    RestTemplate restTemplate = new RestTemplate();
+    	        //converters
+    	        List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+    	        //Add the Jackson Message converter
+    	        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    	        // Note: here we are making this converter to process any kind of response,
+    	        // not only application/*json, which is the default behaviour
+    	        converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+    	        messageConverters.add(converter);
+    	        restTemplate.setMessageConverters(messageConverters);
+
+    	        //get the other details
+    	        String uri = "http://localhost:3000/getProfileData/"+userID;
+    	        HttpHeaders headers = new HttpHeaders();
+    	        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    	        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+    	        HttpEntity<String> entity = new HttpEntity<>(headers);
+    	        ResponseEntity<User_profiles> ProfileResult = restTemplate.exchange(uri, HttpMethod.GET, entity, User_profiles.class);
+    	        User_profiles outObj = ProfileResult.getBody();//user profile data
+    		    return outObj;
+    	}catch(Exception e) {
+    		throw new Exception("Error occured when getting profile data (updateUserProfile.java) : " + e.toString());
     	}
     }
 }

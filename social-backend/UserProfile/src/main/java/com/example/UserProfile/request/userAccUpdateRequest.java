@@ -26,8 +26,6 @@ public class userAccUpdateRequest {
     private String last_name;
     @JsonProperty("bio")
     private String bio;
-    @JsonProperty("profile_pic_url")
-    private String profile_pic_url;
     @JsonProperty("birth_date")
     private Timestamp birth_date;
     @JsonProperty("mobile")
@@ -54,7 +52,6 @@ public class userAccUpdateRequest {
 		this.first_name = first_name;
 		this.last_name = last_name;
 		this.bio = bio;
-		this.profile_pic_url = profile_pic_url;
 		this.birth_date = birth_date;
 		this.mobile = mobile;
 		this.address = address;
@@ -72,9 +69,6 @@ public class userAccUpdateRequest {
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }
-
-    public String getProfile_pic_url() { return profile_pic_url; }
-    public void setProfile_pic_url(String profile_pic_url) { this.profile_pic_url = profile_pic_url; }
 
     public Timestamp getBirth_date() { return birth_date; }  // Fixed getter name
     public void setBirth_date(Timestamp birth_date) { this.birth_date = birth_date; }

@@ -14,6 +14,7 @@ import { CookiesProvider, useCookies } from 'react-cookie';
 import NotificationPage from './Components/notificationPage.jsx';
 import CreatePost from './Components/createPost.jsx';
 import EditProfile from './Components/editProfile.jsx';
+import EmailConfirmation from './Components/emailConfirmation.jsx';
 import {
   BrowserRouter as Router,
   Routes,
@@ -37,7 +38,8 @@ function App(){
         <Route path = '/ViewAllImages' element={<ViewAllImages/>}/>
         <Route path = '/notificationPage' element = {<NotificationPage/>}/>
         <Route path = '/createPost' element = {<CreatePost/>}/>  
-        <Route path='/editProfile' element = {<EditProfile/>}/>   
+        <Route path='/editProfile' element = {<EditProfile/>}/>
+        <Route path='/emailConfirmation' element = {<EmailConfirmation/>}/>   
       </Routes>
     </Router>
     </>
