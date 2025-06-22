@@ -24,26 +24,45 @@ const UpdateSection = () => {
 
   const [responseMessage, setResponseMessage] = useState("");
   const [isUsernamePopupOpen, setIsUsernamePopupOpen] = useState(false);
+  const [isEditEmailOpen, setIsEditEmailOpen] = useState(false);
   const [isProfileImagePopupOpen, setIsProfileImagePopupOpen] = useState(false);
   const [draggedImage, setDraggedImage] = useState(null);
+  const [newEmail, setNewEmail] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-  const handleImageDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setDraggedImage(reader.result);
-        setFormData({ ...formData, profile_pic_url: reader.result });
-      };
-      reader.readAsDataURL(file);
+  useEffect(() => {
+  return () => {
+    if (draggedImage) {
+      URL.revokeObjectURL(draggedImage); // Clean up preview URLs
     }
   };
+}, [draggedImage]);
+  // const handleImageDrop = (e) => {
+  //   e.preventDefault();
+  //   const file = e.dataTransfer.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       setDraggedImage(reader.result);
+  //       setFormData({ ...formData, profile_pic_url: reader.result });
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+  const [imageFile, setImageFile] = useState(null);
+  const handleImageDrop = (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const objectUrl = URL.createObjectURL(file); // For preview
+    setDraggedImage(objectUrl);
+    // Store the actual FILE object in state
+    setImageFile(file); 
+  }
+};
 
   const handleImageDragOver = (e) => {
     e.preventDefault();
@@ -63,12 +82,54 @@ const UpdateSection = () => {
   const handleChangePassword = async (e) => {
     e.preventDefault();
       if(formData.userName != "" || formData.password != ""){
+        var updateObj = new UpdateAccInfo(userIDIn,formData.first_name,formData.last_name,formData.bio,formData.birth_date,formData.mobile,formData.address,formData.job,1,"","");
+        var resultUpdateProfile = await updateObj.updateProcess();
+        if(resultUpdateProfile == "A varification code is sent to your email."){
         const sendingData = {newUserName : formData.userName,newPassword : formData.password}
-      navigate('/emailConfirmation',{state: sendingData});
+        navigate('/emailConfirmation',{state: sendingData});
+        }else{
+          alert(resultUpdateProfile);
+        }
       }else{
         alert("Username and password must not be empty");
       }
   }
+  const handleSubmitUpdateProfileImg = async (e) => {
+    e.preventDefault();
+    try{
+      if(!imageFile){
+        alert("Select an image");
+      }
+      else{
+        var updateImgResult = await UpdateAccInfo.updateProfileImg(userIDIn,imageFile);
+      }
+    }catch(error){
+      alert('Error occured when updating image : ' + error);
+    }finally{
+      if(imageFile){
+        alert(updateImgResult);
+        window.location.reload();
+      }
+    }
+  };
+
+  function validateEmail(email) {
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  return regex.test(email);
+  }
+  const handleEmailUpdate = async () => {
+  if (!validateEmail(newEmail)) {
+    alert('Please enter a valid email address');
+    return;
+  }else{
+navigate('/emailConfirmation2', {
+  state: {
+    userID: userIDIn,   // Your user ID from state
+    newEmail: newEmail  // The new email from input
+  }
+});
+  }
+  };
   //loads the information 
  useEffect(() => {
     GetProfileInfo(userIDIn).then(data => {
@@ -84,7 +145,6 @@ const UpdateSection = () => {
       }));
     });
   }, []); 
-
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
       <h2 className="text-2xl font-bold mb-4">Update Profile</h2>
@@ -167,6 +227,12 @@ const UpdateSection = () => {
         Update Username & Password
       </button>
       <button
+        onClick={() => setIsEditEmailOpen(true)}
+        className="mt-4 w-full p-2 bg-red-500 text-white rounded hover:bg-green-600"
+      >
+        Update your email
+      </button>
+      <button
         onClick={() => setIsProfileImagePopupOpen(true)}
         className="mt-4 w-full p-2 bg-purple-500 text-white rounded hover:bg-purple-600"
       >
@@ -232,7 +298,7 @@ const UpdateSection = () => {
             </div>
             <button
               className="w-full p-2 mt-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
-              onClick={handleSubmit}
+              onClick={handleSubmitUpdateProfileImg}
             >
               Update
             </button>
@@ -245,6 +311,37 @@ const UpdateSection = () => {
           </div>
         </div>
       )}
+
+      {isEditEmailOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white p-6 rounded-lg shadow-xl w-1/3">
+      <h3 className="text-xl font-bold mb-4">Update Email</h3>
+      
+      {/* Replaced drag/drop area with email input */}
+      <input
+        type="email"
+        value={newEmail}
+        onChange={(e) => setNewEmail(e.target.value)}
+        placeholder="Enter new email address"
+        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        required
+      />
+      
+      <button
+        className="w-full p-2 mt-4 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
+        onClick={handleEmailUpdate}  // Changed to email handler
+      >
+        Update Email
+      </button>
+      <button
+        onClick={() => setIsEditEmailOpen(false)}  // Close this specific popup
+        className="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
 
       {responseMessage && (
         <p className="mt-4 text-center text-gray-700">{responseMessage}</p>

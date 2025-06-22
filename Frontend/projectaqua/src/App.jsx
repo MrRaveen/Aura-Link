@@ -15,6 +15,7 @@ import NotificationPage from './Components/notificationPage.jsx';
 import CreatePost from './Components/createPost.jsx';
 import EditProfile from './Components/editProfile.jsx';
 import EmailConfirmation from './Components/emailConfirmation.jsx';
+import EmailConfirmation2 from './Components/emailConfiamtion2.jsx';
 import {
   BrowserRouter as Router,
   Routes,
@@ -39,7 +40,8 @@ function App(){
         <Route path = '/notificationPage' element = {<NotificationPage/>}/>
         <Route path = '/createPost' element = {<CreatePost/>}/>  
         <Route path='/editProfile' element = {<EditProfile/>}/>
-        <Route path='/emailConfirmation' element = {<EmailConfirmation/>}/>   
+        <Route path='/emailConfirmation' element = {<EmailConfirmation/>}/> 
+        <Route path='/emailConfirmation2' element = {<EmailConfirmation2/>}/>   
       </Routes>
     </Router>
     </>

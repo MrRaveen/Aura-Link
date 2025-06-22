@@ -251,11 +251,11 @@ public class AccessPoint {
     }
     //change the profile image
     @PutMapping("/updateProfileImage")
-    public ResponseEntity<String>updateProfileImage(){
+    public ResponseEntity<String>updateProfileImage(@RequestParam("file") MultipartFile file,@RequestParam int userID){
     	try {
-    		return new ResponseEntity<String>("ok",HttpStatusCode.valueOf(HttpStatus.SC_OK)); 
+    		return new ResponseEntity<String>(profileUpdate.updateProfileImageByID(file, userID),HttpStatusCode.valueOf(HttpStatus.SC_OK)); 
     	}catch(Exception e) {
-    		return new ResponseEntity<String>("error" + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_OK));
+    		return new ResponseEntity<String>("Error occured when updating the profile image (AccessPoint.java) : " + e.toString() + e.toString(),HttpStatusCode.valueOf(HttpStatus.SC_OK));
     	}
     }
     @DeleteMapping("/removeCache")

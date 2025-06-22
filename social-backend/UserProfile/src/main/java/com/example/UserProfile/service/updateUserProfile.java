@@ -1,5 +1,8 @@
 package com.example.UserProfile.service;
 
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
 import com.example.UserProfile.configuration.Credentials;
 import com.example.UserProfile.entity.CheckEmailVerificationMongo;
 import com.example.UserProfile.entity.User_profiles;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,6 +56,8 @@ public class updateUserProfile {
 	private Credentials cre;
 	@Autowired
 	private UsersRepo userRepo;
+    @Autowired
+    private BlobServiceClient blobServiceClient;
 	@Autowired
 	private CheckEmailVerificationMongoRepo mongoRepoObj;
     private static final Logger logger = LogManager.getLogger(updateUserProfile.class);
@@ -281,6 +287,30 @@ public class updateUserProfile {
     		    return outObj;
     	}catch(Exception e) {
     		throw new Exception("Error occured when getting profile data (updateUserProfile.java) : " + e.toString());
+    	}
+    }
+    //update the profile image
+    public String updateProfileImageByID(MultipartFile file,int userID) throws Exception {
+    	try {
+    		/*
+    		 * create the image name using userID
+    		 * remove the image from blob
+    		 * insert the new image
+    		 * */
+    		String fileName = "userpic"+userID+".jpg";
+            BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient("profileimages");
+            boolean result = containerClient.getBlobClient(fileName).deleteIfExists();
+            //insert new img
+            BlobClient blobClient = containerClient.getBlobClient(fileName);
+            // Upload the file
+            blobClient.upload(file.getInputStream(), file.getSize(), true);
+            if(!blobClient.getBlobUrl().isEmpty()) {
+            	return "Image updated";
+            }else {
+        		return "Image not updated";
+            }
+    	}catch(Exception e) {
+    		throw new Exception("Error occured when updating profile image (updateUserProfile.java) : " + e.toString());
     	}
     }
 }

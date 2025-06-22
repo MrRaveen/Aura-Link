@@ -29,7 +29,7 @@ class UpdateAccInfo{
             address: this.addressIn,
             job: this.jobIn,
             userName: this.userNameIn,
-            passwordIn: this.passwordIn,
+            password: this.passwordIn,
             choice: this.choiceIn
         }, { withCredentials: true })
         .then(async response=>{
@@ -37,6 +37,45 @@ class UpdateAccInfo{
         })
         .catch(error=>{
             return "Error occured (updateAccInfo.jsx) : " + error;
+        });
+    }
+    checkVerification(verificationCode){
+         //send the request
+        return axios.put('http://localhost:8020/api/userAccount/checkVerification?verificationCode='+verificationCode,{
+            userID: this.userIDIn,
+            first_name: this.first_nameIn,
+            last_name: this.last_nameIn,
+            bio: this.bioIn,
+            birth_date: this.birth_dateIn,
+            mobile: this.mobileIn,
+            address: this.addressIn,
+            job: this.jobIn,
+            userName: this.userNameIn,
+            password: this.passwordIn,
+            choice: this.choiceIn
+        }, { withCredentials: true })
+        .then(async response=>{
+            return response.data;
+        })
+        .catch(error=>{
+            return "Error occured (updateAccInfo.jsx) : " + error;
+        });
+    }
+    static updateProfileImg(userID,newImage){
+        const formData = new FormData();
+        formData.append('file',newImage);
+          //send the request
+        return axios.put('http://localhost:8020/api/userAccount/updateProfileImage?userID='+userID,formData,{
+             withCredentials: true,
+             headers: {
+                'Content-Type': 'multipart/form-data'
+             } 
+        })
+        .then(async response=>{
+            return response.data;
+        })
+        .catch(error=>{
+            return "Error occured when updating profile image (updateAccInfo.jsx) : " + error;
         });
     }
 }
