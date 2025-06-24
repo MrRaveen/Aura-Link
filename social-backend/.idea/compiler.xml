@@ -12,6 +12,16 @@
         <module name="gateway" />
         <module name="configServer" />
       </profile>
+      <profile name="Annotation profile for savePost2" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+        </processorPath>
+        <module name="savePost2" />
+      </profile>
       <profile name="Annotation profile for UserProfile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -28,7 +38,6 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
-        <module name="savePost2" />
         <module name="getPosts" />
         <module name="socialCreateAccountService" />
         <module name="createAccountService" />
@@ -36,12 +45,16 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Notifications" target="21" />
+      <module name="NotificationsService" target="21" />
       <module name="savePosts" target="21" />
       <module name="socialAccountCreateService" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Notifications" options="-parameters" />
+      <module name="NotificationsService" options="-parameters" />
       <module name="SocialAuthLogIn" options="-parameters" />
       <module name="UserProfile" options="-parameters" />
       <module name="configServer" options="-parameters" />

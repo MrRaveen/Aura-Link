@@ -122,12 +122,17 @@ const UpdateSection = () => {
     alert('Please enter a valid email address');
     return;
   }else{
-navigate('/emailConfirmation2', {
+    //send the request
+     var requestResult = await UpdateAccInfo.updateEmailSendRequest(newEmail,userIDIn,1,formData.verificationCode);
+     alert(requestResult);
+     if(requestResult != null){
+      navigate('/emailConfirmation2', {
   state: {
     userID: userIDIn,   // Your user ID from state
     newEmail: newEmail  // The new email from input
   }
 });
+     }
   }
   };
   //loads the information 

@@ -16,6 +16,8 @@
         <option value="$PROJECT_DIR$/getPosts/pom.xml" />
         <option value="$PROJECT_DIR$/savePost2/pom.xml" />
         <option value="$PROJECT_DIR$/UserProfile/pom.xml" />
+        <option value="$PROJECT_DIR$/NotificationsService/pom.xml" />
+        <option value="$PROJECT_DIR$/Notifications/pom.xml" />
       </list>
     </option>
   </component>

@@ -45,7 +45,7 @@ const [notifications, setNotifications] = useState([
 
   return (
    <div>
-                <StickyNavbar></StickyNavbar>
+    <StickyNavbar></StickyNavbar>
      <div className="max-w-2xl mx-auto p-4">
       <div className="flex justify-between items-center mb-4 pb-2 border-b">
         <h2 className="text-xl font-bold">Notifications</h2>

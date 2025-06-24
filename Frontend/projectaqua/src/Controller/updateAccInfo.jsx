@@ -78,5 +78,14 @@ class UpdateAccInfo{
             return "Error occured when updating profile image (updateAccInfo.jsx) : " + error;
         });
     }
+    static updateEmailSendRequest(email,userID,mode,verificationCode){
+         return axios.put('http://localhost:8020/api/userAccount/changeEmail?email='+email+'&userID='+userID+'&mode='+mode+'&verificationCode='+verificationCode, { withCredentials: true })
+        .then(async response=>{
+            return response.data;
+        })
+        .catch(error=>{
+            return "Error occured when updating email (updateAccInfo.jsx) : " + error;
+        });
+    }
 }
 export default UpdateAccInfo;

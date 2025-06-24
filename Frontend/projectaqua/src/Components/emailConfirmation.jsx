@@ -61,7 +61,7 @@ const EmailConfirmation = () => {
               required
               type="text"
               id="confirmationCode"
-              name="verificationCode" // ✅ Added name attribute
+              name="verificationCode" 
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Enter your code"
             />
