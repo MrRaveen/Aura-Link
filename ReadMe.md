@@ -5,7 +5,7 @@
 - React JS 
 - Tailwind CSS & CSS
 - MySQL, MS Azure Blob storage
-- Redis
+- Redis and Mongo DB
 ## Screenshots
 ![alt text](image-1.png)
 ![alt text](image.png)
