@@ -3,6 +3,8 @@ package com.example.notificationService.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.sql.Date;
@@ -18,6 +20,7 @@ public class notificationsMongo {
         REPLY
     }
     @Id
+    private ObjectId id;
     private int ID;
     private int recipientUserId;
     private int actorUserId;
@@ -96,7 +99,15 @@ public class notificationsMongo {
         return isRead;
     }
 
-    public LocalDate getCreatedDate() {
+    public ObjectId getId() {
+		return id;
+	}
+
+	public void setId(ObjectId id) {
+		this.id = id;
+	}
+
+	public LocalDate getCreatedDate() {
         return createdDate;
     }
 
@@ -104,14 +115,20 @@ public class notificationsMongo {
         return createdTime;
     }
 
-    public notificationsMongo(int recipientUserId, int actorUserId, NotificationType type, String header, String body, boolean isRead, LocalDate createdDate, LocalDateTime createdTime) {
-        this.recipientUserId = recipientUserId;
-        this.actorUserId = actorUserId;
-        this.type = type;
-        this.header = header;
-        this.body = body;
-        this.isRead = isRead;
-        this.createdDate = createdDate;
-        this.createdTime = createdTime;
-    }
+	public notificationsMongo(ObjectId id, int iD2, int recipientUserId, int actorUserId, NotificationType type,
+			String header, String body, boolean isRead, LocalDate createdDate, LocalDateTime createdTime) {
+		super();
+		this.id = id;
+		ID = iD2;
+		this.recipientUserId = recipientUserId;
+		this.actorUserId = actorUserId;
+		this.type = type;
+		this.header = header;
+		this.body = body;
+		this.isRead = isRead;
+		this.createdDate = createdDate;
+		this.createdTime = createdTime;
+	}
+
+    
 }

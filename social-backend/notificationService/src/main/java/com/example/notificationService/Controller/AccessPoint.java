@@ -45,8 +45,12 @@ public class AccessPoint {
 	}
 	//update reading status by click
 	@PostMapping("/updateNotStatusByClick")
-	public String updateNotificationSatatusByClick(@RequestParam int userID,@RequestParam String notificationID) {
-		return "";
+	public Boolean updateNotificationSatatusByClick(@RequestParam String notificationID) throws Exception {
+		try {
+			return service1.updateReadStatus(notificationID);
+		}catch(Exception e) {
+			throw new Exception("Error occued when updating status (AccessPoint.java) : " + e.toString());
+		}
 	}
 	//remove the notification
 	@DeleteMapping("/removeNotification")

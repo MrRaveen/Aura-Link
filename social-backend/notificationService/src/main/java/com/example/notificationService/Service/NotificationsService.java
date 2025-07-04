@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,6 +19,14 @@ import com.example.notificationService.Entity.notificationsMongo;
 import com.example.notificationService.Repository.notificationRepoMongo;
 import com.example.notificationService.Response.NotificationResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.bson.types.ObjectId;
+
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 public class NotificationsService {
 	@Autowired
 	public notificationRepoMongo test;
+	@Autowired
+	public MongoTemplate mongoTemplate;
 	//get the notifications
 	public List<NotificationResponse> getNotifications(int userID) throws Exception{
 		try {
@@ -52,7 +63,7 @@ public class NotificationsService {
 		        ResponseEntity<com.example.notificationService.Entity.User_profiles> ProfileResult = restTemplate.exchange(uri, HttpMethod.GET, entity, com.example.notificationService.Entity.User_profiles.class);
 		        com.example.notificationService.Entity.User_profiles outObj = ProfileResult.getBody();//user profile data
 		        //create the response object
-		        NotificationResponse creatingObject = new NotificationResponse(String.valueOf(obj.getID()), String.valueOf(obj.getType()), obj.getHeader(), obj.getBody(), obj.getCreatedDate(), obj.getRecipientUserId(), obj.getActorUserId(), obj.isRead(), outObj.getProfile_pic_url());
+		        NotificationResponse creatingObject = new NotificationResponse(String.valueOf(obj.getId()), String.valueOf(obj.getType()), obj.getHeader(), obj.getBody(), obj.getCreatedDate(), obj.getRecipientUserId(), obj.getActorUserId(), obj.isRead(), outObj.getProfile_pic_url());
 		        contentResponse.add(creatingObject);
 			});
 			return contentResponse;
@@ -63,10 +74,21 @@ public class NotificationsService {
 	//update reading status
 	public Boolean updateReadStatus(String notificationID) throws Exception {
 		try {
-			
-		   return false;
+			Query query = new Query(Criteria.where("_id").is(new ObjectId(notificationID)));
+			Update update = new Update().set("isRead", true);
+			mongoTemplate.updateFirst(query, update, notificationsMongo.class);
+		   return true;
 		}catch(Exception e) {
 			throw new Exception("Error occured when updating the status (NotificationsService.java): " + e.toString());
+		}
+	}
+	//remove the notification
+	public Boolean removeProcessByID(String notificationID) throws Exception{
+		try {
+			
+			return false;
+		}catch(Exception e) {
+			throw new Exception("Error occured when removing notification (NotificationService.java) : " + e.toString());
 		}
 	}
 }
