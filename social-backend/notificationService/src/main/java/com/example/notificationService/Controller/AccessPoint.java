@@ -1,5 +1,11 @@
 package com.example.notificationService.Controller;
 
+import java.util.List;
+
+import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.notificationService.Response.NotificationResponse;
+import com.example.notificationService.Service.NotificationsService;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -16,16 +25,23 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/notification")
 @CrossOrigin
 public class AccessPoint {
+	@Autowired
+	private NotificationsService service1;
 	//get the notifications
 	@GetMapping("/getNotifications")
-	public String getAllNotifications(@RequestParam int userID) {
+	public ResponseEntity<List<NotificationResponse>> getAllNotifications(@RequestParam int userID) {
 		/*
 		 * get the notifications from mongo db
 		 * get the image link
 		 * map the response 
 		 * send the response
 		 * */
-		return "";
+		try {
+			List<NotificationResponse> out = service1.getNotifications(userID);
+			return new ResponseEntity<List<NotificationResponse>>(out,null, HttpStatus.SC_OK);
+		}catch(Exception e) {
+			return new ResponseEntity<List<NotificationResponse>>(null,null, HttpStatus.SC_CONFLICT);
+		}
 	}
 	//update reading status by click
 	@PostMapping("/updateNotStatusByClick")

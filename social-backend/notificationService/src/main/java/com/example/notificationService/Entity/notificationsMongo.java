@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Document("userNotifications")
 public class notificationsMongo {
@@ -26,7 +27,7 @@ public class notificationsMongo {
     private String body; //title
     private boolean isRead;
     private LocalDate createdDate;
-    private Timestamp createdTime;
+    private LocalDateTime createdTime;
 
     public notificationsMongo() {
     }
@@ -63,7 +64,7 @@ public class notificationsMongo {
         this.createdDate = createdDate;
     }
 
-    public void setCreatedTime(Timestamp createdTime) {
+    public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
 
@@ -99,11 +100,11 @@ public class notificationsMongo {
         return createdDate;
     }
 
-    public Timestamp getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public notificationsMongo(int recipientUserId, int actorUserId, NotificationType type, String header, String body, boolean isRead, LocalDate createdDate, Timestamp createdTime) {
+    public notificationsMongo(int recipientUserId, int actorUserId, NotificationType type, String header, String body, boolean isRead, LocalDate createdDate, LocalDateTime createdTime) {
         this.recipientUserId = recipientUserId;
         this.actorUserId = actorUserId;
         this.type = type;
