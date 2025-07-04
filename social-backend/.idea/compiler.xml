@@ -22,15 +22,6 @@
         </processorPath>
         <module name="savePost2" />
       </profile>
-      <profile name="Annotation profile for UserProfile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
-        </processorPath>
-        <module name="UserProfile" />
-      </profile>
       <profile name="Annotation profile for socialCreateAccountService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -42,6 +33,16 @@
         <module name="socialCreateAccountService" />
         <module name="createAccountService" />
         <module name="login" />
+      </profile>
+      <profile name="Annotation profile for notificationService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="UserProfile" />
+        <module name="notificationService" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -63,6 +64,7 @@
       <module name="gateway" options="-parameters" />
       <module name="getPosts" options="-parameters" />
       <module name="login" options="-parameters" />
+      <module name="notificationService" options="-parameters" />
       <module name="savePost2" options="-parameters" />
       <module name="savePosts" options="-parameters" />
       <module name="socialAccountCreateService" options="-parameters" />

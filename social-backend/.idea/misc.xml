@@ -18,6 +18,7 @@
         <option value="$PROJECT_DIR$/UserProfile/pom.xml" />
         <option value="$PROJECT_DIR$/NotificationsService/pom.xml" />
         <option value="$PROJECT_DIR$/Notifications/pom.xml" />
+        <option value="$PROJECT_DIR$/notificationService/pom.xml" />
       </list>
     </option>
   </component>
