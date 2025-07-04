@@ -54,7 +54,11 @@ public class AccessPoint {
 	}
 	//remove the notification
 	@DeleteMapping("/removeNotification")
-	public String deleteProcess(@RequestParam String notificationID) {
-		return "";
+	public ResponseEntity<Boolean> deleteProcess(@RequestParam String notificationID) {
+		try {
+			return new ResponseEntity<Boolean>(service1.removeProcessByID(notificationID),null,HttpStatus.SC_OK);
+		}catch(Exception e) {
+			return new ResponseEntity<Boolean>(false,null,HttpStatus.SC_CONFLICT);
+		}
 	}
 }

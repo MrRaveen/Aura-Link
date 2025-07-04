@@ -85,8 +85,9 @@ public class NotificationsService {
 	//remove the notification
 	public Boolean removeProcessByID(String notificationID) throws Exception{
 		try {
-			
-			return false;
+			Query query = new Query(Criteria.where("_id").is(new ObjectId(notificationID)));
+		    mongoTemplate.remove(query, notificationsMongo.class);
+			return true;
 		}catch(Exception e) {
 			throw new Exception("Error occured when removing notification (NotificationService.java) : " + e.toString());
 		}
